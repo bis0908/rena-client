@@ -1,0 +1,41 @@
+body {
+  box-sizing: border-box;
+}
+
+a {
+  text-align: center;
+  text-decoration: none !important;
+  /* 링크의 밑줄 제거 */
+}
+
+h1 {
+  color: gray;
+}
+
+h5 {
+  margin: 0px !important;
+}
+
+button {
+  box-shadow: 1px 1px 1px 1px lightgray;
+}
+
+tr,
+td {
+  text-align: center;
+}
+
+.card-body img {
+  width: 100%;
+  height: auto;
+}
+
+.mail-btn-area button {
+  width: 135px;
+  font-size: 14px;
+}
+
+.mail-btn-area-under button {
+  width: 135px;
+  font-size: 14px;
+}

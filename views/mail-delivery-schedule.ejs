@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <%- include('./vendors.ejs') %>
+    <title>Mail Delivery Schedule</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <!-- <div class="container-sm container-lg container-xxl container-fluid"> -->
+    <h1 class="my-4">Mail Delivery Schedule</h1>
+    <div class="btn-group" role="group">
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="listingsPerPageDropdown"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-files"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="listingsPerPageDropdown">
+          <li><a class="dropdown-item" href="#" onclick="changeListingsPerPage(10)">10</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeListingsPerPage(20)">20</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeListingsPerPage(30)">30</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeListingsPerPage(40)">40</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeListingsPerPage(50)">50</a></li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-light" onclick="location.href='/'">
+        <i class="bi bi-house-fill" style="color:#0d6efd"></i>
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle table-hover" id="data-table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-no">No</th>
+            <th scope="col" class="col-sender-no">발송기</th>
+            <th scope="col" class="col-collection-id">수집ID</th>
+            <th scope="col" class="col-sender-name">발송이름</th>
+            <th scope="col" class="col-sender-group">발송그룹</th>
+            <th scope="col" class="col-title">제목</th>
+            <th scope="col" class="col-body">본문</th>
+            <th scope="col" class="col-dispatch-registration-time">발송 등록 시간</th>
+            <th scope="col" class="col-send-start-time">발송 시작 시간</th>
+            <th scope="col" class="col-dispatch-finish-time">발송 완료 시간</th>
+            <th scope="col" class="col-reservation-sent">예약</th>
+            <th scope="col" class="col-send-status">발송상태</th>
+          </tr>
+        </thead>
+
+
+        <tbody id="mailTableBody" class="table-group-divider">
+          <!-- Mail delivery schedule rows will be populated here -->
+        </tbody>
+
+      </table>
+    </div>
+
+    <ul class="pagination justify-content-center">
+      <nav>
+        <!-- Pagination will be added here -->
+    </ul>
+    </nav>
+
+    <!-- <button type="button" class="btn btn-light" onclick="location.href='/'">
+      <i class="bi bi-house-fill" style="color:#0d6efd"></i>
+    </button> -->
+
+  </div>
+
+  <!-- Modal for displaying details -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalContent">
+          <!-- Modal content will be populated here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mail-delivery-schedule.js"></script>
+</body>
+
+</html>

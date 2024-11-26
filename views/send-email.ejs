@@ -1,0 +1,283 @@
+<div class="col-12" id="send-panel">
+  <div class="sendMail">
+    <div class="container">
+      <div class="d-flex align-items-center flex-row justify-content-between">
+        <!-- <div class="p-0">
+          <h2>Send Mail</h2>
+        </div> -->
+        <div class="p-0">
+          <h6></h6>
+        </div>
+        <button
+          type="button"
+          class="btn btn-sm btn-success p-2"
+          id="getServerStatus"
+          data-bs-toggle="modal"
+          data-bs-target="#serverStatus"
+        >
+          <i class="bi bi-hdd-rack"></i> 서버 상태
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-group mb-1">
+    <span class="input-group-text" id="basic-addon1">발송명</span>
+    <input type="text" class="form-control" id="senderName" value="리뷰나비" />
+  </div>
+
+  <div class="input-group mb-1">
+    <span class="input-group-text" id="basic-addon1">메일제목</span>
+    <input type="text" class="form-control" id="subjectInput" />
+  </div>
+
+  <div class="input-group mb-1">
+    <span class="input-group-text" id="basic-addon1">발송 그룹명</span>
+    <input type="text" class="form-control" id="senderGroup" />
+  </div>
+
+  <div class="input-group mb-1">
+    <span class="input-group-text" id="basic-addon1">링크넣기</span>
+    <div class="form-floating">
+      <input
+        type="text"
+        class="form-control"
+        id="campaignNo"
+        placeholder="campaignNo"
+      />
+      <label for="campaignNo">캠페인 번호</label>
+    </div>
+    <div class="form-floating">
+      <input
+        type="text"
+        class="form-control"
+        id="displayText"
+        placeholder="displayText"
+        value="신청링크"
+      />
+      <label for="displayText">표시문구</label>
+    </div>
+    <button class="btn btn-info" type="button" id="insertLink">
+      링크삽입 <i class="bi bi-link-45deg"></i>
+    </button>
+  </div>
+
+  <div class="input-group rounded" id="editor"></div>
+
+  <div class="d-flex justify-content-end mb-1">
+    <div class="btn-group mail-btn-area">
+      <button type="button" class="btn btn-secondary btn-sm" id="saveTemplate">
+        템플릿 저장
+        <i class="bi bi-save"></i>
+      </button>
+      <button type="button" class="btn btn-success btn-sm" id="controlTemplate">
+        템플릿 관리
+        <i class="bi bi-gear"></i>
+      </button>
+      <button type="button" class="btn btn-warning btn-sm" id="openInNewWindow">
+        본문 확인
+        <i class="bi bi-box-arrow-up-right"></i>
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" id="clearQuillText">
+        본문 삭제
+        <i class="bi bi-x-circle"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <div class="btn-group mail-btn-area-under">
+      <button type="button" class="btn btn-info" id="sendMailTest">
+        발송 등록 테스트
+      </button>
+      <button type="button" class="btn btn-secondary" id="sendMailResv">
+        예약발송
+        <i class="bi bi-send-plus"></i>
+      </button>
+      <button type="button" class="btn btn-primary" id="sendMailImmd">
+        즉시발송
+        <i class="bi bi-send-exclamation"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-light"
+        onclick="window.open('/mail-delivery-group-state')"
+      >
+        발송 현황
+        <i class="bi bi-box-arrow-up-right"></i>
+      </button>
+      <button type="button" class="btn btn-dark" id="logout">
+        Logout
+        <i class="bi bi-door-closed"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Sender Email Modal -->
+<div
+  class="modal fade"
+  id="senderEmailModal"
+  tabindex="-1"
+  aria-labelledby="senderEmailModalLabel"
+  aria-hidden="true"
+  data-backdrop="static"
+  data-keyboard="false"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="senderEmailModalLabel">
+          전체 이메일 테스트
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" id="senderEmailModalBody"></div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="htmlTemplateModal"
+  tabindex="-1"
+  aria-labelledby="htmlTemplateModalLabel"
+  aria-hidden="true"
+  data-backdrop="static"
+  data-keyboard="false"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="htmlTemplateModalLabel"></h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="row row-cols-1 header-sticky mt-2 ms-2 me-2">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="업주 검색"
+            id="template-search"
+          />
+          <button class="btn btn-outline-danger" id="del-checked-template">
+            템플릿 삭제
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" id="htmlTemplateModalBody"></div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for toggle -->
+<div class="modal fade" id="toggleModal" aria-hidden="true" tabindex="-1">
+  <div
+    class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 w-100" id="toggleModal-title"></h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <input type="text" class="visually-hidden" id="template-id" />
+        <button class="btn btn-primary" id="back-to-template-list">
+          돌아가기
+        </button>
+        <button type="button" class="btn btn-warning" id="edit-template">
+          수정
+        </button>
+        <button
+          type="button"
+          class="btn btn-success visually-hidden"
+          id="save-template"
+        >
+          본문 저장
+        </button>
+        <button type="button" class="btn btn-info choose-template">선택</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for displaying details -->
+<div
+  class="modal fade"
+  id="detailsModal"
+  tabindex="-1"
+  aria-labelledby="detailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel"></h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- Modal content will be populated here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="serverStatus"
+  tabindex="-1"
+  aria-labelledby="serverStatusModalLabel"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="serverStatusModalLabel">
+          Server Status
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

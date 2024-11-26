@@ -1,0 +1,89 @@
+#currentTime {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+#comments {
+  display: none;
+  min-height: 25rem;
+}
+
+#sentIdList {
+  display: none;
+  /* min-height: 25rem; */
+}
+
+#changedMailList {
+  display: none;
+  min-height: 25rem;
+}
+
+#senderIdList {
+  display: none;
+  /* min-height: 25rem; */
+}
+
+#chooseSender {
+  color: black !important;
+}
+
+#getServerStatus,
+#testAll,
+#addNewMail {
+  width: 6.875rem;
+}
+
+#campaignNo,
+#displayText {
+  height: 0.625rem;
+}
+
+#toast {
+  /* Position it */
+  position: fixed;
+  z-index: 9999;
+  /* Above everything else in the document */
+
+  /* Position it at the bottom right of the viewport */
+  bottom: 20px;
+  right: 20px;
+}
+
+#htmlTemplateModal .modal-content {
+  min-height: 37.5rem;
+  max-height: 37.5rem;
+}
+
+#senderModal .modal-content {
+  min-height: 43.75rem;
+  max-height: 43.75rem;
+}
+
+#unassign-all-emails,
+#dbRest {
+  width: 8rem;
+  height: 1.5625rem;
+  font-size: small;
+}
+
+#agent-dropdown-menu,
+#store-dropdown-menu {
+  max-height: 31.25rem;
+}
+
+#tag-area {
+  background-color: #fbfdff;
+  border: 1px solid #ccc;
+  border-radius: 0.525rem;
+  padding: 0.3125rem;
+  min-height: 2rem;
+}
+
+#score1,
+#score2 {
+  flex-grow: 0.2;
+}
+
+#selectedSender {
+  flex-grow: 0.5;
+}

@@ -1,0 +1,55 @@
+@import url("./modules/tagStyle.css");
+@import url("./modules/classStyle.css");
+@import url("./modules/idStyle.css");
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+:root {
+  --state-color-level-4: #f1bcb3;
+  --state-color-level-5: #ee9889;
+  --state-color-level-7: #f6826e;
+  --state-color-level-8: #ff6347;
+}
+
+* {
+  word-wrap: break-word;
+  font-family: "Nanum Gothic", sans-serif !important;
+  /* font-weight: 500; */
+  /* word-break: keep-all; */
+}
+
+@media (max-width: 768px) {
+  .col-no,
+  .col-collection-id,
+  /* .col-dispatch-registration-time, */
+  .col-send-start-time,
+  .col-dispatch-finish-time,
+  .col-reservation-sent {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-keyword,
+  .col-title,
+  .col-sender-group
+
+  /* .col-body, */
+  /* .col-send-status  */ {
+    display: none;
+  }
+}
+
+@media (max-width: 414px) {
+  .col-sender-no
+
+  /* .col-sender-name */ {
+    display: none;
+  }
+}
+
+.custom-tooltip {
+  /* --bs-tooltip-bg: #ff6347 !important; */
+  /* --bs-tooltip-color: #ffffff !important; */
+  --bs-tooltip-bg: #1c304a !important;
+  --bs-tooltip-color: #b3efff !important;
+}

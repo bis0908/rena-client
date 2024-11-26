@@ -1,0 +1,149 @@
+div.col-md-5 {
+  border: 1px solid darkcyan;
+  margin: 0.0625rem;
+}
+
+.box {
+  width: 200px;
+  text-align: center;
+}
+
+.result {
+  height: 34.75rem;
+}
+
+.input-group {
+  margin: auto;
+}
+
+.input-group-text {
+  width: 100px;
+}
+
+.list-group-item {
+  width: 21.25rem;
+}
+
+.form-floating label {
+  padding-top: 8px !important;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.spinner-border {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1001;
+}
+
+.progress {
+  position: fixed !important;
+  width: 31.25rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1002;
+}
+
+.ql-editor {
+  width: 100%;
+  min-height: 18.75rem;
+  height: calc(100% - 200px);
+}
+
+.forcanvas {
+  width: fit-content;
+  height: fit-content;
+}
+
+.templateImage {
+  width: 6.25rem;
+  height: 12.5rem;
+}
+
+.text-red {
+  color: red !important;
+}
+
+.toast-body {
+  white-space: pre-wrap;
+  /* or */
+  white-space: pre-line;
+}
+
+.card-detail {
+  margin: 0px;
+  font-size: smaller;
+  font-style: italic;
+}
+
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.place-self-center {
+  place-self: center;
+}
+
+.header-sticky {
+  height: max-content;
+  position: sticky;
+  top: 0;
+}
+
+#tag-area .btn-close {
+  --bs-btn-close-bg: "";
+  --bs-btn-close-color: red;
+}
+
+.dropdown-agent .btn-agent,
+.text-bg-agent {
+  background-color: #ffeae4;
+  border: 1px;
+}
+
+.dropdown-agent .btn-agent:hover {
+  background-color: #ffeae4;
+}
+
+.dropdown-store .btn-store,
+.text-bg-store {
+  background-color: #f3f6ff;
+}
+
+.dropdown-store .btn-store:hover {
+  background-color: #f3f6ff;
+}
+
+.status-4 {
+  background-color: var(--state-color-level-4);
+}
+
+.status-5 {
+  background-color: var(--state-color-level-5);
+}
+
+.status-7 {
+  background-color: var(--state-color-level-7);
+}
+
+.status-8 {
+  background-color: var(--state-color-level-8);
+}
