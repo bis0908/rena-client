@@ -1,4 +1,4 @@
-# renamailer (네이버 메일 발송UI+발송서버)
+# rena-client (N 메일 발송UI)
 
 # 실행 방법
 
