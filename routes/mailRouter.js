@@ -1,8 +1,8 @@
 import {
   addNewHiworksMail,
-  deleteEmailFromHiworks
+  deleteEmailFromHiworks,
 } from "../models/hiworksService.js";
-import { checkInformation } from "../models/mailService.js";
+// import { checkInformation } from "../models/mailService.js";
 import express from "express";
 import logger from "../config/logger.js";
 
@@ -44,9 +44,7 @@ mailRouter.post("/deleteEmailFromHiworks", async (req, res) => {
   const { willRemoveEmail } = req.body;
 
   try {
-    const result = await deleteEmailFromHiworks(
-      willRemoveEmail
-    );
+    const result = await deleteEmailFromHiworks(willRemoveEmail);
     res.status(200).send({ isSuccess: result });
   } catch (error) {
     logger.error(

@@ -50,6 +50,23 @@ async function delay(interval) {
   return new Promise((resolve) => setTimeout(resolve, interval));
 }
 
+function restoreTransInfo(transInfoBackup) {
+  senderId = transInfoBackup.senderId;
+  loadManager.setItem(strSearchResults, transInfoBackup.idListBackup);
+  updateSearchResult(strSearchResults, 0, idSearchResult);
+  loadManager.setItem(strExistIdLists, transInfoBackup.sentIdBackup);
+  updateSearchResult(strExistIdLists, 1, sentIdList);
+  senderEmailInfo = transInfoBackup.senderEmailInfo;
+  loadManager.setItem(strSenderEmail, senderEmailInfo);
+  updateSearchResult(strSenderEmail, 2, senderIdList);
+  $("#senderName").val(transInfoBackup.senderName);
+  $("#senderGroup").val(transInfoBackup.senderGroup);
+  $("#subjectInput").val(transInfoBackup.subject);
+  setTimeout(() => {
+    quill.root.innerHTML = transInfoBackup.innerHTML;
+  }, 500);
+}
+
 $(document).ready(async function() {
   console.log("loaded index.js");
   loadManager.clear();
@@ -99,19 +116,7 @@ $(document).ready(async function() {
       }`;
 
       if (confirm(message)) {
-        // senderId
-        senderId = transInfoBackup.senderId;
-        // idList
-        loadManager.setItem(strSearchResults, transInfoBackup.idListBackup);
-        updateSearchResult(strSearchResults, 0, idSearchResult);
-        // sentId
-        loadManager.setItem(strExistIdLists, transInfoBackup.sentIdBackup);
-        updateSearchResult(strExistIdLists, 1, sentIdList);
-        // sensitiveInfo
-        senderEmailInfo = transInfoBackup.senderEmailInfo;
-        loadManager.setItem(strSenderEmail, senderEmailInfo);
-        updateSearchResult(strSenderEmail, 2, senderIdList);
-
+        restoreTransInfo(transInfoBackup);
         fetch("/db/getOneSender", {
           method: "POST",
           headers: {
@@ -124,19 +129,6 @@ $(document).ready(async function() {
         .catch((error) => {
           console.error("Error:", error);
         });
-
-        // senderName
-        $("#senderName").val(transInfoBackup.senderName);
-        // senderGroup
-        $("#senderGroup").val(transInfoBackup.senderGroup);
-        // subject
-        $("#subjectInput").val(transInfoBackup.subject);
-        // theme
-        // $("#theme").val(transInfoBackup.theme);
-        // innerHTML
-        setTimeout(() => {
-          quill.root.innerHTML = transInfoBackup.innerHTML;
-        }, 500);
       } else {
         if (confirm("복원 데이터를 삭제 하시겠습니까?")) {
           localStorage.clear();

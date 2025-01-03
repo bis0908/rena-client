@@ -3,10 +3,10 @@ import { executeQuery, pool } from "../config/dbConfig.js";
 import DOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import axios from "axios";
-import { load } from "cheerio";
 import crypto from "node:crypto";
 import dotenv from "dotenv";
-import { getDate } from "./mailService.js";
+import { getDate } from "./common.js";
+import { load } from "cheerio";
 import logger from "../config/logger.js";
 
 dotenv.config({ path: "config.env" });
@@ -26,7 +26,7 @@ function regexHtml(dom) {
     dom = String(dom);
     dom = dom.replace(/=""/g, "");
     dom = dom.replace(/\"/g, "");
-    dom = dom.replace(/\\/g, "\"");
+    dom = dom.replace(/\\/g, '"');
 
     return dom;
   } catch (error) {
@@ -43,12 +43,12 @@ function unEscapeHtml(str) {
     }
     resolve(
       str
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, "\"")
-      .replace(/&#039;/g, "'")
-      .replace(/&#39;/g, "'"),
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&#39;/g, "'")
     );
   });
 }
@@ -62,7 +62,7 @@ async function getHTML(url) {
         logger.error("Config: " + JSON.stringify(error.config));
       } else if (error.request) {
         logger.error(
-          "No response was received: " + JSON.stringify(error.request),
+          "No response was received: " + JSON.stringify(error.request)
         );
       } else {
         logger.error("Error message: " + error.message);
@@ -109,7 +109,6 @@ export async function getOneSender(senderId) {
  * @returns id of array
  */
 export async function realTimeIdCheck(idList, agent_no) {
-
   const rows = await getSuperIds();
   const filteredArr = rows.map((ids) => ids.super_id);
 
@@ -141,7 +140,6 @@ export async function realTimeIdCheck(idList, agent_no) {
  * @returns {Array<String>}
  */
 export async function checkUnsubscribe(idList) {
-
   const placeholders = idList.map(() => "?").join(",");
   const values = idList.map((id) => `${id}@naver.com`);
   const query = `
@@ -230,7 +228,7 @@ export async function InsertSearchlist(
   link,
   title,
   date,
-  senderNo,
+  senderNo
 ) {
   const query = `insert into mail_searchlist (id, keyword, link, title, regdate, agent_no) values (?,?,?,?,?,?);`;
 
@@ -278,7 +276,7 @@ export async function setHtmlTemplate(
   templateName,
   contents,
   senderId,
-  subject,
+  subject
 ) {
   const query = `INSERT INTO template_html (template_name, template,  agent_no, template_subject, regdate) VALUES (?,?,?,?,?);`;
   try {
@@ -323,7 +321,7 @@ export async function deleteHtmlTemplate(templateName, senderId) {
     return result[0].affectedRows > 0;
   } catch (error) {
     logger.error(
-      "deleteHtmlTemplate(): Error querying database:" + error.stack,
+      "deleteHtmlTemplate(): Error querying database:" + error.stack
     );
     throw error;
   }
@@ -333,7 +331,7 @@ export async function updateHtmlTemplate(
   templateName,
   contents,
   senderId,
-  subject,
+  subject
 ) {
   const query = `UPDATE template_html SET template = ?, template_subject = ?, update_date = ?
   WHERE template_name=? AND agent_no=?`;
@@ -366,7 +364,7 @@ export async function getDeliverySchedule() {
     return rows;
   } catch (error) {
     logger.error(
-      "getDeliverySchedule(): Error querying database:" + error.stack,
+      "getDeliverySchedule(): Error querying database:" + error.stack
     );
     throw error;
   }
@@ -382,7 +380,7 @@ export async function getDeliveryScheduleV2(senderGroupNum) {
     return rows;
   } catch (error) {
     logger.error(
-      "getDeliverySchedule(): Error querying database:" + error.stack,
+      "getDeliverySchedule(): Error querying database:" + error.stack
     );
     throw error;
   }
@@ -442,7 +440,7 @@ export async function dbMailingRegistration(transInfos) {
     const groupId = await insertGroupAndContents(
       senderGroup,
       cleanSubject,
-      innerHTML,
+      innerHTML
     );
 
     delete transInfos["innerHTML"];
@@ -542,7 +540,7 @@ export async function deleteKeyWord(no) {
 
 export async function getAllowedSendingTimeRange() {
   const [rows, fields] = await pool.query(
-    "SELECT start_time, end_time FROM mail_delivery_timezone LIMIT 1",
+    "SELECT start_time, end_time FROM mail_delivery_timezone LIMIT 1"
   );
   if (rows.length > 0) {
     return { startTime: rows[0].start_time, endTime: rows[0].end_time };
@@ -686,14 +684,16 @@ export async function updateSender(oldId, newId, domain) {
       fullOldId,
     ]);
 
-    console.log("queryService.js:683 / resultGoogleSender: ",
-      resultGoogleSender);
+    console.log(
+      "queryService.js:683 / resultGoogleSender: ",
+      resultGoogleSender
+    );
 
     if (resultGoogleSender[0].affectedRows > 0) {
       // mail_delivery_schedule 테이블 업데이트
       const resultDeliverySchedule = await connection.query(
         queryDeliverySchedule,
-        [fullNewId, oldId],
+        [fullNewId, oldId]
       );
       await connection.commit();
       return resultDeliverySchedule[0].affectedRows > 0;
@@ -828,7 +828,7 @@ export async function updateHtmlTemplateContents(
   no,
   templateName,
   title,
-  contents,
+  contents
 ) {
   const query = `
   UPDATE template_html
@@ -1294,7 +1294,7 @@ export async function updateJisuLog(postingInfoArrObj, keyword) {
       // 1. __blogger 테이블에서 nickname 찾기
       const [bloggerRows] = await connection.query(
         `SELECT no, nickname FROM __blogger WHERE blog_id = ?`,
-        [post.id],
+        [post.id]
       );
       const nickname = bloggerRows.length > 0 ? bloggerRows[0].nickname : null;
       const blogger_no = bloggerRows.length > 0 ? bloggerRows[0].no : null;
@@ -1309,7 +1309,7 @@ export async function updateJisuLog(postingInfoArrObj, keyword) {
         post.postingUrl,
         post.subject,
         post.rawScore,
-        mysqlRegDate,  // 변환된 DATE 형식
+        mysqlRegDate, // 변환된 DATE 형식
         post.rank,
         "사용x",
       ];
@@ -1328,7 +1328,8 @@ export async function updateJisuLog(postingInfoArrObj, keyword) {
               search_date, 
               rank,
               keyword_type) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)`, params
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)`,
+        params
       );
     }
     await connection.commit();
@@ -1342,13 +1343,13 @@ export async function updateJisuLog(postingInfoArrObj, keyword) {
 }
 
 function parseDate(dateString) {
-  if (!dateString || dateString.trim() === '') {
+  if (!dateString || dateString.trim() === "") {
     return null;
   }
 
   try {
     // 공백으로 분리하여 첫 번째 부분(날짜)만 사용
-    const datePart = dateString.trim().split(' ')[0];
+    const datePart = dateString.trim().split(" ")[0];
 
     // yyyy-mm-dd 형식인지 확인
     if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
@@ -1358,10 +1359,10 @@ function parseDate(dateString) {
     // 다른 형식의 날짜 문자열 처리 (기존 로직)
     const date = new Date(dateString);
     if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split("T")[0];
     }
 
-    throw new Error('Invalid date format');
+    throw new Error("Invalid date format");
   } catch (error) {
     console.error("날짜 파싱 오류:", dateString, error);
     return null;

@@ -1,15 +1,16 @@
 import { authRouter } from "./routes/authRouter.js";
 import { crawlingRouter } from "./routes/crawlRouter.js";
 import cryptoRandomString from "crypto-random-string";
+import { errorHandler } from "./config/error_handler.js";
 import express from "express";
 import initSocketIO from "./models/socketService.js";
 import logger from "./config/logger.js";
 import { mailRouter } from "./routes/mailRouter.js";
+import moment from "moment-timezone";
 import { pool } from "./config/dbConfig.js";
 import { queryRouter } from "./routes/dbRouter.js";
 import session from "express-session";
 import { vendorsRouter } from "./routes/vendorsRouter.js";
-import moment from "moment-timezone"
 
 // import path from "path";
 
@@ -17,7 +18,7 @@ const app = express();
 const PORT = 3000;
 // const __dirname = path.resolve(); // for ES module
 
-moment.tz.setDefault('Asia/Seoul');
+moment.tz.setDefault("Asia/Seoul");
 
 app.use(
   express.urlencoded({
@@ -43,7 +44,12 @@ app.use(
     limit: "400mb",
   })
 );
+
+// template engine
 app.set("view engine", "ejs");
+
+// error handler
+app.use(errorHandler);
 
 // routes
 app.use("/vendors", vendorsRouter);
@@ -128,5 +134,5 @@ app.post("/logout", async (req, res) => {
         res.redirect("/");
       });
     }
-  } catch (error) { }
+  } catch (error) {}
 });

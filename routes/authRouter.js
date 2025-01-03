@@ -1,33 +1,26 @@
-import express from "express";
-import logger from "../config/logger.js";
 import * as authService from "../models/authService.js";
+
+import { asyncHandler } from "../config/error_handler.js";
+import express from "express";
 
 export const authRouter = express.Router();
 
-authRouter.post("/login", async (req, res) => {
-  let password = req.body.password;
-  try {
+authRouter.post(
+  "/login",
+  asyncHandler(async (req, res) => {
+    const { password } = req.body;
     const result = await authService.serverLogin(password);
-    if (result) {
-      req.session.loggedin = true;
-      res.status(200).send({ success: result });
-    } else {
-      res.status(200).send({ success: result });
-    }
-  } catch (error) {
-    logger.error(error.stack);
-    res.status(500).send("Internal Server Error");
-  }
-});
 
-authRouter.post("/changePassword", async (req, res) => {
-  const { currentPw, newPw } = req.body;
+    req.session.loggedin = result;
+    res.status(200).send({ success: result });
+  })
+);
 
-  try {
+authRouter.post(
+  "/changePassword",
+  asyncHandler(async (req, res) => {
+    const { currentPw, newPw } = req.body;
     const result = await authService.changePassword(currentPw, newPw);
     res.status(200).send(result);
-  } catch (error) {
-    logger.error(error.stack);
-    res.status(500).send("Internal Server Error");
-  }
-});
+  })
+);

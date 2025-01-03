@@ -1,39 +1,30 @@
 import logger from "../config/logger.js";
 import { pool } from "../config/dbConfig.js";
 
-export async function serverLogin(password) {
+async function executeQuery(query, params) {
   try {
-    const query =
-      "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
-    const result = await pool.query(query, [password]);
-
-    if (result[0].length > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    const [rows] = await pool.query(query, params);
+    return rows;
   } catch (error) {
     logger.error(error.stack);
     throw error;
   }
 }
 
-export async function changePassword(currentPw, newPw) {
-  try {
-    let query =
-      "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
-    let result = await pool.query(query, [currentPw]);
+export async function serverLogin(password) {
+  const query = "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
+  const result = await executeQuery(query, [password]);
+  return result.length > 0;
+}
 
-    if (result[0].length > 0) {
-      query =
-        "UPDATE login_renamailer SET `password` = SHA2(?, 256) WHERE `password` = SHA2(?, 256);";
-      await pool.query(query, [newPw, currentPw]);
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    logger.error(error.stack);
-    return false;
+export async function changePassword(currentPw, newPw) {
+  const selectQuery = "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
+  const updateQuery = "UPDATE login_renamailer SET `password` = SHA2(?, 256) WHERE `password` = SHA2(?, 256);";
+
+  const result = await executeQuery(selectQuery, [currentPw]);
+  if (result.length > 0) {
+    await executeQuery(updateQuery, [newPw, currentPw]);
+    return true;
   }
+  return false;
 }

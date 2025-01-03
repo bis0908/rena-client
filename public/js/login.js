@@ -16,7 +16,10 @@ $(document).ready(function () {
 
 $("#submitPasswordChange").on("click", function (e) {
   e.preventDefault();
+  handlePasswordChange();
+});
 
+function handlePasswordChange() {
   const currentPassword = $("#currentPassword").val();
   const newPassword = $("#newPassword").val();
   const confirmNewPassword = $("#confirmNewPassword").val();
@@ -34,7 +37,7 @@ $("#submitPasswordChange").on("click", function (e) {
   } else {
     changePassword(currentPassword, newPassword);
   }
-});
+}
 
 function tryLogin() {
   $.ajax({
@@ -44,7 +47,6 @@ function tryLogin() {
     dataType: "json",
     success: function (response) {
       if (response.success === true) {
-        // console.log("response: ", response);
         window.location.href = "/";
       } else {
         $("#currentPasswordLogin").show();
@@ -67,7 +69,6 @@ function changePassword(currentPassword, newPassword) {
     },
     success: function (response) {
       if (response) {
-        // bool = response.success;
         $("#passwordChangeModal").modal("hide");
         setTimeout(() => {
           $(".toast").toast("show");

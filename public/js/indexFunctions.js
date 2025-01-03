@@ -51,10 +51,8 @@ const loadManager = {
 const createMessage = (senderEmail, senderName, action) =>
   `${senderEmail} 계정이 발송기 [${senderName}] 에서 ${action} 되었습니다.`;
 
-$(function () {
-  setTimeout(() => {
-    mySocketId = socket.id;
-  }, 500);
+// 중복 코드 제거 및 함수화
+function handleSocketEvents() {
   socket.on("getEmailStateChanged", (data) => {
     const { state, senderEmail, agent_no, mail_no, senderName } = data;
     const senderList = loadManager.getItem(strSenderEmail);
@@ -86,7 +84,6 @@ $(function () {
           $("#mailId .badge").text(senderList.length - 1);
         }
       }
-
       findEmailRemoveBadge(mail_no, agent_no);
       showToast(createMessage(senderEmail, senderName, "비활성화"), "warning");
     }
@@ -135,6 +132,13 @@ $(function () {
   socket.on("progress", (percentage) => {
     updateProgressBar(percentage);
   });
+}
+
+$(function () {
+  setTimeout(() => {
+    mySocketId = socket.id;
+  }, 500);
+  handleSocketEvents();
 });
 
 const changeSpinnerState = (index, successFailure) => {

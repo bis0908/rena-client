@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { getDate } from "../models/mailService.js";
+import { getDate } from "../models/common.js";
 import mysql from "mysql2/promise";
 
 dotenv.config({ path: "config.env" });
@@ -17,18 +17,18 @@ const pool = mysql.createPool({
 
 const executeQuery = async (sql, params = []) => {
   console.log(
-    `🔽================================[${getDate()}]=================================🔽`,
+    `🔽================================[${getDate()}]=================================🔽`
   );
   console.log(`🔥 / file: dbConfig.js:22 / executeQuery / sql:`, sql);
   console.log("🔥 / file: dbConfig.js:23 / executeQuery / params:", params);
   const stack = new Error().stack
-  .split("\n")
-  .slice(2, 4)
-  .map((stack) => stack.trim())
-  .join("\n");
+    .split("\n")
+    .slice(2, 4)
+    .map((stack) => stack.trim())
+    .join("\n");
   console.log(
     "🔥 / file: dbConfig.js:30 / executeQuery / Call Stack:\n",
-    stack,
+    stack
   );
   try {
     const [rows, fields] = await pool.query(sql, params);
@@ -37,11 +37,13 @@ const executeQuery = async (sql, params = []) => {
     }
     if (rows.length > 0) {
       console.log("🔥 / file: dbConfig.js:39 / executeQuery / rows:", rows);
-      console.log("🔥 / file: dbConfig.js:40 / executeQuery / rows[0]:",
-        rows[0]);
+      console.log(
+        "🔥 / file: dbConfig.js:40 / executeQuery / rows[0]:",
+        rows[0]
+      );
     }
     console.log(
-      `🔼==================================[${getDate()}]===============================🔼`,
+      `🔼==================================[${getDate()}]===============================🔼`
     );
     return rows;
   } catch (error) {
