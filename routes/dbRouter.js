@@ -7,8 +7,7 @@ import { idMisMatchCheck } from "../models/doSearchService.js";
 
 export const queryRouter = express.Router();
 
-// 1. getSender 라우트
-queryRouter.post(
+queryRouter.get(
   "/getSender",
   asyncHandler(async (req, res) => {
     const senderList = await queryService.getSender();
@@ -16,18 +15,16 @@ queryRouter.post(
   })
 );
 
-// 2. getOneSender 라우트
-queryRouter.post(
-  "/getOneSender",
+queryRouter.get(
+  "/getOneSender/:id",
   asyncHandler(async (req, res) => {
-    const { senderId } = req.body;
-    const senderName = await queryService.getOneSender(senderId);
+    const { id } = req.params;
+    const senderName = await queryService.getOneSender(id);
     res.send(senderName);
   })
 );
 
-// 3. changeSenderName 라우트
-queryRouter.post(
+queryRouter.patch(
   "/changeSenderName",
   asyncHandler(async (req, res) => {
     const { name, no } = req.body;
@@ -36,7 +33,6 @@ queryRouter.post(
   })
 );
 
-// 4. addManual 라우트
 queryRouter.post(
   "/addManual",
   asyncHandler(async (req, res) => {
@@ -59,17 +55,15 @@ queryRouter.post(
   })
 );
 
-// 5. getSenderEmail 라우트
-queryRouter.post(
-  "/getSenderEmail",
+queryRouter.get(
+  "/getSenderEmail/:no",
   asyncHandler(async (req, res) => {
-    const senderNo = req.body.no;
+    const senderNo = req.params.no;
     const result = await queryService.getSenderEmail(senderNo);
     res.json(result);
   })
 );
 
-// 6. addSenderMail 라우트
 queryRouter.post(
   "/addSenderMail",
   asyncHandler(async (req, res) => {
@@ -79,7 +73,6 @@ queryRouter.post(
   })
 );
 
-// 7. addBlackList 라우트
 queryRouter.post(
   "/addBlackList",
   asyncHandler(async (req, res) => {
@@ -89,11 +82,10 @@ queryRouter.post(
   })
 );
 
-// 8. deleteSender 라우트
-queryRouter.post(
-  "/deleteSender",
+queryRouter.delete(
+  "/deleteSender/:senderEmail",
   asyncHandler(async (req, res) => {
-    const senderEmail = req.body.senderEmail;
+    const senderEmail = req.params.senderEmail;
     const result = await queryService.deleteSender(senderEmail);
     res.status(200).send(result);
   })
@@ -115,19 +107,19 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/sendListClear",
+queryRouter.delete(
+  "/sendListClear/:senderId",
   asyncHandler(async (req, res) => {
-    const senderId = req.body.senderId;
+    const senderId = req.params.senderId;
     const result = await queryService.sendListClear(senderId);
     res.status(200).send(result);
   })
 );
 
-queryRouter.post(
-  "/getHtmlTemplate",
+queryRouter.get(
+  "/getHtmlTemplate/:senderId",
   asyncHandler(async (req, res) => {
-    const { senderId } = req.body;
+    const senderId = req.params.senderId;
     const templateList = await queryService.getHtmlTemplate(senderId);
     res.status(200).send(templateList);
   })
@@ -156,10 +148,10 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/deleteHtmlTemplate",
+queryRouter.delete(
+  "/deleteHtmlTemplate/:templateName/:senderId",
   asyncHandler(async (req, res) => {
-    const { templateName, senderId } = req.body;
+    const { templateName, senderId } = req.params;
     const result = await queryService.deleteHtmlTemplate(
       templateName,
       senderId
@@ -168,7 +160,7 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
+queryRouter.patch(
   "/updateHtmlTemplate",
   asyncHandler(async (req, res) => {
     const { templateName, contents, senderId, subject } = req.body;
@@ -182,8 +174,7 @@ queryRouter.post(
   })
 );
 
-// 9. getDeliverySchedule 라우트
-queryRouter.post(
+queryRouter.get(
   "/mailDeliverySchedule",
   asyncHandler(async (req, res) => {
     const result = await queryService.getDeliverySchedule();
@@ -191,8 +182,7 @@ queryRouter.post(
   })
 );
 
-// 10. updateMailDeliverySchedule 라우트
-queryRouter.post(
+queryRouter.patch(
   "/updateMailDeliverySchedule",
   asyncHandler(async (req, res) => {
     const { no, newSendStartTime } = req.body;
@@ -204,8 +194,7 @@ queryRouter.post(
   })
 );
 
-// 11. dbMailingRegistration 라우트
-queryRouter.post(
+queryRouter.get(
   "/dbMailingRegistration",
   asyncHandler(async (req, res) => {
     const { transInfo } = req.body;
@@ -214,7 +203,6 @@ queryRouter.post(
   })
 );
 
-// 12. addSentList 라우트
 queryRouter.post(
   "/addSentList",
   asyncHandler(async (req, res) => {
@@ -228,7 +216,6 @@ queryRouter.post(
   })
 );
 
-// 13. insertKeyWord 라우트
 queryRouter.post(
   "/insertKeyWord",
   asyncHandler(async (req, res) => {
@@ -242,26 +229,25 @@ queryRouter.post(
   })
 );
 
-// 14. getKeyWord 라우트
-queryRouter.post(
-  "/getKeyWord",
+queryRouter.get(
+  "/getKeyWord/:senderId",
   asyncHandler(async (req, res) => {
-    const { senderId } = req.body;
+    const senderId = req.params.senderId;
     const result = await queryService.getKeyWord(senderId);
     res.status(200).send(result);
   })
 );
 
-queryRouter.post(
-  "/deleteKeyWord",
+queryRouter.delete(
+  "/deleteKeyWord/:no",
   asyncHandler(async (req, res) => {
-    const { no } = req.body;
+    const no = req.params.no;
     const result = await queryService.deleteKeyWord(no);
     res.status(200).send(result);
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getAllowedTimeZone",
   asyncHandler(async (req, res) => {
     const result = await queryService.getAllowedSendingTimeRange();
@@ -269,16 +255,16 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/deleteKeyWordList",
+queryRouter.delete(
+  "/deleteKeyWordList/:noList",
   asyncHandler(async (req, res) => {
-    const { noList } = req.body;
+    const noList = req.params.noList;
     const result = await queryService.deleteKeyWordList(noList);
     res.status(200).send(result);
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getMailGroupState",
   asyncHandler(async (req, res) => {
     const data = await queryService.getMailGroupState();
@@ -286,16 +272,16 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/getMailGroupStateDetail",
+queryRouter.get(
+  "/getMailGroupStateDetail/:rowNo",
   asyncHandler(async (req, res) => {
-    const { rowNo } = req.body;
+    const rowNo = req.params.rowNo;
     const result = await queryService.getMailGroupStateDetail(rowNo);
     res.status(200).send(result);
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getSuperIds",
   asyncHandler(async (req, res) => {
     const result = await queryService.getSuperIds();
@@ -303,7 +289,7 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
+queryRouter.patch(
   "/changeSender",
   asyncHandler(async (req, res) => {
     const { oldId, newId, domain } = req.body;
@@ -318,7 +304,7 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getSenderAll",
   asyncHandler(async (req, res) => {
     const result = await queryService.getSenderAll();
@@ -326,21 +312,19 @@ queryRouter.post(
   })
 );
 
-// delete group from ajax call /delete-group (given no)
-queryRouter.post(
-  "/deleteGroup",
+queryRouter.delete(
+  "/deleteGroup/:no",
   asyncHandler(async (req, res) => {
-    const { no } = req.body;
+    const no = req.params.no;
     const result = await queryService.deleteGroup(no);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-// suspendGroup from ajax call /suspendGroup (given no)
-queryRouter.post(
-  "/suspendGroup",
+queryRouter.get(
+  "/suspendGroup/:no",
   asyncHandler(async (req, res) => {
-    const { no } = req.body;
+    const no = req.params.no;
     const count = await queryService.getGroupDeliveryCount(no);
 
     if (count > 0) {
@@ -355,18 +339,16 @@ queryRouter.post(
   })
 );
 
-// reopenGroup from ajax call /reopenGroup (given no)
-queryRouter.post(
-  "/reopenGroup",
+queryRouter.patch(
+  "/reopenGroup/:groupNo",
   asyncHandler(async (req, res) => {
-    const { groupNo } = req.body;
+    const groupNo = req.params.groupNo;
     const result = await queryService.reopenGroup(groupNo);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-// route for getSenderTemplate()
-queryRouter.post(
+queryRouter.get(
   "/getSenderTemplateAll",
   asyncHandler(async (req, res) => {
     const result = await queryService.getSenderTemplateAll();
@@ -374,20 +356,20 @@ queryRouter.post(
   })
 );
 
-// route for getSpecificTemplate(no)
-queryRouter.post(
-  "/getSpecificTemplate",
+queryRouter.get(
+  "/getSpecificTemplate/:no",
   asyncHandler(async (req, res) => {
-    const { no } = req.body;
+    const no = req.params.no;
     const result = await queryService.getSpecificTemplate(no);
     res.status(200).send({ isSuccess: true, data: result });
   })
 );
 
-queryRouter.post(
-  "/updateHtmlTemplateContents",
+queryRouter.patch(
+  "/updateHtmlTemplateContents/:no",
   asyncHandler(async (req, res) => {
-    const { no, templateName, mailTitle, innerHTML } = req.body;
+    const no = req.params.no;
+    const { templateName, mailTitle, innerHTML } = req.body;
     const result = await queryService.updateHtmlTemplateContents(
       no,
       templateName,
@@ -398,17 +380,16 @@ queryRouter.post(
   })
 );
 
-// route for deleteHtmlTemplateList(noList)
-queryRouter.post(
-  "/deleteHtmlTemplateList",
+queryRouter.delete(
+  "/deleteHtmlTemplateList/:noList",
   asyncHandler(async (req, res) => {
-    const { noList } = req.body;
+    const noList = req.params.noList;
     const result = await queryService.deleteHtmlTemplateList(noList);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getSenderEmails",
   asyncHandler(async (req, res) => {
     const result = await queryService.getSenderEmails();
@@ -445,16 +426,16 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/isEmailUsing",
+queryRouter.get(
+  "/isEmailUsing/:email",
   asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const email = req.params.email;
     const result = await queryService.isEmailUsing(email);
     res.status(200).send({ isSuccess: true, data: result });
   })
 );
 
-queryRouter.post(
+queryRouter.get(
   "/getCurrentMailAllocationStatus",
   asyncHandler(async (req, res) => {
     const result = await queryService.getCurrentMailAllocationStatus();
@@ -462,17 +443,16 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/getErrorMessageSummary",
+queryRouter.get(
+  "/getErrorMessageSummary/:groupNo",
   asyncHandler(async (req, res) => {
-    const { groupNo } = req.body;
+    const groupNo = req.params.groupNo;
     const result = await queryService.getErrorMessageSummary(groupNo);
     res.status(200).send({ isSuccess: true, data: result });
   })
 );
 
-// route for getFilterTemplateAll()
-queryRouter.post(
+queryRouter.get(
   "/getFilterTemplateAll",
   asyncHandler(async (req, res) => {
     const result = await queryService.getFilterTemplateAll();
@@ -480,7 +460,6 @@ queryRouter.post(
   })
 );
 
-// route for saveFilterTemplate(filterName, filterArray)
 queryRouter.post(
   "/setFilterTemplate",
   asyncHandler(async (req, res) => {
@@ -493,46 +472,48 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/deleteSpecificFilterList",
+queryRouter.delete(
+  "/deleteSpecificFilterList/:noList",
   asyncHandler(async (req, res) => {
-    const { noList } = req.body;
+    const noList = req.params.noList;
     const result = await queryService.deleteSpecificFilterList(noList);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-queryRouter.post(
-  "/getThisGroupsSender",
+queryRouter.get(
+  "/getThisGroupsSender/:groupNo",
   asyncHandler(async (req, res) => {
-    const { groupNo } = req.body;
+    const groupNo = req.params.groupNo;
     const result = await queryService.getThisGroupsSender(groupNo);
     res.status(200).send({ isSuccess: true, data: result });
   })
 );
 
-queryRouter.post(
-  "/changeSenderEmail",
+queryRouter.patch(
+  "/changeSenderEmail/:groupNo/:targetMail",
   asyncHandler(async (req, res) => {
-    const { groupNo, targetMail } = req.body;
+    const groupNo = req.params.groupNo;
+    const targetMail = req.params.targetMail;
     const result = await queryService.changeSenderEmail(groupNo, targetMail);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-queryRouter.post(
-  "/changeServerName",
+queryRouter.patch(
+  "/changeServerName/:no",
   asyncHandler(async (req, res) => {
-    const { no, newServerName } = req.body;
+    const no = req.params.no;
+    const newServerName = req.body.newServerName;
     const result = await queryService.changeServerName(no, newServerName);
     res.status(200).send({ isSuccess: result });
   })
 );
 
-queryRouter.post(
-  "/deleteServer",
+queryRouter.delete(
+  "/deleteServer/:no",
   asyncHandler(async (req, res) => {
-    const { no } = req.body;
+    const no = req.params.no;
     const result = await queryService.deleteServer(no);
     res.status(200).send({ isSuccess: result });
   })
@@ -567,16 +548,16 @@ queryRouter.post(
 queryRouter.delete(
   "/super-account-delete/:id",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = req.params.id;
     await queryService.deleteSuperAccount(id);
     res.json({ isSuccess: true });
   })
 );
 
-queryRouter.put(
+queryRouter.patch(
   "/super-account-toggle/:id",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = req.params.id;
     const { isEmergency } = req.body;
     await queryService.toggleEmergency(id, isEmergency);
     res.json({ isSuccess: true });

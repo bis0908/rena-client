@@ -268,39 +268,10 @@ function keepCheckBox() {
   });
 }
 
-/* function mailListKeyDown(index) {
-  if ($("#nav-0").index() == index) {
-    $(idSearchResult)
-      .off("keydown")
-      .on("keydown", function (e) {
-        let option = $(this).children("option:selected").val();
-        if (e.key == "Delete") {
-          const collectedId = loadManager.getItem(strSearchResults);
-          const updatedCollectedId = collectedId.filter((id) => {
-            return id !== option ? true : false;
-          });
-          loadManager.setItem(strSearchResults, updatedCollectedId);
-          $(this).children("option:selected").remove();
-          $("#collectedId .badge").text(updatedCollectedId.length);
-          // updateSearchResult(strSearchResults, 0, idSearchResult);
-        } else if (e.key == "Tab") {
-          e.preventDefault();
-          option = option.replace(" ", "").split("/")[0];
-          const message = `수집ID '${option}' 를 블랙리스트에 추가하시겠습니까?`;
-          if (confirm(message)) {
-            const time = getDate();
-            addBlackListFromDB(option, time);
-            $(this).children("option:selected").remove();
-          }
-        }
-      });
-  }
-} */
-
 function changeSenderEmail(oldId, newId, domain) {
   $("#new-sender-id").css("pointer-events", "none").css("opacity", "0.5");
 
-  $.post(
+  $.patch(
     "/db/changeSender",
     { oldId, newId, domain },
     function (data, textStatus, jqXHR) {
@@ -424,8 +395,9 @@ function fillDOM(list, index, selectTagId) {
         let option = `<option data-index="${index}" style="color: blue;" ${classStyle}>${element.id} / ${element.score} / ${element.member}</option>`;
         selectTagId.append(option);
       } else if (element.id) {
-        let option = `<option data-index="${index}" ${classStyle}>${element.id
-          } / ${element.score ? element.score : "지수 없음"}</option>`;
+        let option = `<option data-index="${index}" ${classStyle}>${
+          element.id
+        } / ${element.score ? element.score : "지수 없음"}</option>`;
         selectTagId.append(option);
       } else {
         let option = `<option data-index="${index}" ${classStyle}>${element}</option>`;
@@ -452,10 +424,12 @@ function fillDOM(list, index, selectTagId) {
 function baseLiTag(senderName, no) {
   const baseLiTag = `<div class="d-flex justify-content-center sender-row">
   <li class="list-group-item">
-  <input class="form-check-input me-1" type="radio" name="listGroupRadio" data-senderId="${no}" id="${senderName + no
-    }">
-  <label class="form-check-label" for="${senderName + no
-    }">${no}. ${senderName}</label>
+  <input class="form-check-input me-1" type="radio" name="listGroupRadio" data-senderId="${no}" id="${
+    senderName + no
+  }">
+  <label class="form-check-label" for="${
+    senderName + no
+  }">${no}. ${senderName}</label>
   </li>
   <button type="button" class="btn btn-primary" id="changeSenderName">이름변경</button>
   </div>`;
@@ -755,7 +729,8 @@ function addSenderMailAccount(newId, newPw, messageFromServer) {
       success: function (response) {
         if (response.isSuccess) {
           showToast(
-            `새로운 계정 정보가 등록되었습니다: ${(newId, messageFromServer ?? "")
+            `새로운 계정 정보가 등록되었습니다: ${
+              (newId, messageFromServer ?? "")
             }`,
             "success"
           );
@@ -1009,7 +984,7 @@ function InsertSearchList(manualId, keyword, link, title) {
       url: "/db/InsertSearchlist",
       data: { id, keyword, link, title, senderId, date },
       dataType: "json",
-      success: function (response) { },
+      success: function (response) {},
       error: (xhr, status, error) => {
         console.error(xhr);
         console.error(status);
@@ -1085,8 +1060,9 @@ function senderTestMail(senderEmail) {
  * @param {senderIndex} index
  */
 async function sendTestMail(email, testId, senderName, index) {
-  const senderDiv = `<div class="d-flex justify-content-between m-1">${index + 1 + ". "
-    }${email}
+  const senderDiv = `<div class="d-flex justify-content-between m-1">${
+    index + 1 + ". "
+  }${email}
         <div class="spinner-grow spinner-grow-sm" role="status" data-spinIdx="${index}"></div>
         </div>`;
   $("#senderEmailModalBody").append(senderDiv);
@@ -1838,24 +1814,24 @@ function createSenderEmailList(senderEmails, insertId) {
   // 도메인 우선 정렬
   const sortedEmails = Array.isArray(senderEmails)
     ? senderEmails.sort((a, b) => {
-      const [, domainA] = a.id.split('@');
-      const [, domainB] = b.id.split('@');
-      const [userA] = a.id.split('@');
-      const [userB] = b.id.split('@');
+        const [, domainA] = a.id.split("@");
+        const [, domainB] = b.id.split("@");
+        const [userA] = a.id.split("@");
+        const [userB] = b.id.split("@");
 
-      // 도메인으로 먼저 비교
-      if (domainA !== domainB) {
-        return domainA.localeCompare(domainB);
-      }
-      // 도메인이 같은 경우 사용자명으로 비교
-      return userA.localeCompare(userB);
-    })
+        // 도메인으로 먼저 비교
+        if (domainA !== domainB) {
+          return domainA.localeCompare(domainB);
+        }
+        // 도메인이 같은 경우 사용자명으로 비교
+        return userA.localeCompare(userB);
+      })
     : [];
 
   console.log("Sorted Emails:", sortedEmails);
 
   sortedEmails.forEach((senderEmail) => {
-    const [, domain] = senderEmail.id.split('@');
+    const [, domain] = senderEmail.id.split("@");
     let color = "black"; // 기본 색상
 
     if (domain.includes("naver")) {
@@ -1868,16 +1844,22 @@ function createSenderEmailList(senderEmails, insertId) {
 
     list += `<div class="form-check form-switch p-0 g-0 mt-1">
       <li class="list-group-item d-flex justify-content-start p-1 w-auto">
-      <input class="form-check-input sender-switch ms-0 me-2" type="checkbox" role="switch" id='email-${senderEmail.no}'
+      <input class="form-check-input sender-switch ms-0 me-2" type="checkbox" role="switch" id='email-${
+        senderEmail.no
+      }'
       data-email=${senderEmail.id} ${senderId == undefined ? "disabled" : ""}>
-      <label class="form-check-label" for="${senderEmail.id}" style="color: ${color};">${senderEmail.id}</label>
+      <label class="form-check-label" for="${
+        senderEmail.id
+      }" style="color: ${color};">${senderEmail.id}</label>
       </li></div>`;
   });
 
   if (sortedEmails.length === 0) {
     list = `<div class="form-check form-switch p-0 g-0 mt-1">
     <li class="list-group-item d-flex justify-content-start p-1 w-auto">
-    <input class="form-check-input sender-switch ms-0 me-2" type="checkbox" role="switch" id='email-${insertId}' data-email=${senderEmails} ${senderId == undefined ? "disabled" : ""}>
+    <input class="form-check-input sender-switch ms-0 me-2" type="checkbox" role="switch" id='email-${insertId}' data-email=${senderEmails} ${
+      senderId == undefined ? "disabled" : ""
+    }>
     <label class="form-check-label" for="${senderEmails}">${senderEmails}</label>
     </li></div>`;
   }
@@ -2450,9 +2432,9 @@ function deleteEmailFromHiworks(willRemoveEmail) {
 }
 
 function loadSuperAccounts() {
-  $.get('/db/super-account-list', function (accounts) {
-    const $list = $('#superAccountList').empty();
-    accounts.forEach(account => {
+  $.get("/db/super-account-list", function (accounts) {
+    const $list = $("#superAccountList").empty();
+    accounts.forEach((account) => {
       $list.append(createAccountItem(account));
     });
   });
@@ -2477,50 +2459,56 @@ function createAccountItem(account) {
       <div>
         <div class="form-check form-switch d-inline-block me-2">
           <input class="form-check-input toggle-emergency" type="checkbox" role="switch" 
-                 id="emergency-${account.no}" ${account.is_emergency === 'Y' ? 'checked' : ''}
+                 id="emergency-${account.no}" ${
+    account.is_emergency === "Y" ? "checked" : ""
+  }
                  data-id="${account.no}"
                  title="발송 메일에 해당 계정이 존재할 경우 즉시 메일을 발송합니다."
                  >
-          <label class="form-check-label" for="emergency-${account.no}">즉시 발송</label>
+          <label class="form-check-label" for="emergency-${
+            account.no
+          }">즉시 발송</label>
         </div>
-        <button class="btn btn-danger btn-sm delete-super-account" data-id="${account.no}">삭제</button>
+        <button class="btn btn-danger btn-sm delete-super-account" data-id="${
+          account.no
+        }">삭제</button>
       </div>
     </li>
   `;
 }
 
 function addSuperAccount() {
-  const superId = $('#newSuperAccount').val().trim();
+  const superId = $("#newSuperAccount").val().trim();
   if (superId) {
-    $.post('/db/super-account-add', { superId }, function (newAccount) {
+    $.post("/db/super-account-add", { superId }, function (newAccount) {
       console.log("indexFunctions.js/:2477 - newAccount: ", newAccount);
-      $('#superAccountList').append(createAccountItem(newAccount));
-      $('#newSuperAccount').val('');
+      $("#superAccountList").append(createAccountItem(newAccount));
+      $("#newSuperAccount").val("");
     });
   }
 }
 
 function deleteSuperAccount() {
-  const id = $(this).data('id');
+  const id = $(this).data("id");
   $.ajax({
     url: `/db/super-account-delete/${id}`,
-    type: 'DELETE',
+    type: "DELETE",
     success: function () {
-      $(`#account-${id}`).closest('li').remove();
-    }
+      $(`#account-${id}`).closest("li").remove();
+    },
   });
 }
 
 function toggleEmergency() {
-  const id = $(this).data('id');
-  const isEmergency = $(this).prop('checked');
+  const id = $(this).data("id");
+  const isEmergency = $(this).prop("checked");
   $.ajax({
     url: `/db/super-account-toggle/${id}`,
-    type: 'PUT',
+    type: "PUT",
     data: { isEmergency },
     success: function () {
       // 토글 상태가 성공적으로 변경되었습니다.
-    }
+    },
   });
 }
 
@@ -2530,10 +2518,10 @@ function updateSenderList() {
 
   // 도메인 우선 정렬
   const sortedEmails = senderEmails.sort((a, b) => {
-    const [, domainA] = a.split('@');
-    const [, domainB] = b.split('@');
-    const [userA] = a.split('@');
-    const [userB] = b.split('@');
+    const [, domainA] = a.split("@");
+    const [, domainB] = b.split("@");
+    const [userA] = a.split("@");
+    const [userB] = b.split("@");
 
     console.log(`Comparing domains: ${domainA} vs ${domainB}`);
     console.log(`Comparing users: ${userA} vs ${userB}`);

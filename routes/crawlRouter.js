@@ -58,8 +58,7 @@ crawlingRouter.post("/search", async (req, res) => {
   try {
     const { keyword, score1, score2, no: agent_no } = req.body;
     keywordStr = keyword;
-    const newKeyword = keyword.replace(/ /g, "%20");
-    const queryUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${newKeyword}`;
+    const queryUrl = `https://m.search.naver.com/`;
 
     postingInfoArrObj = await crawlingId(
       queryUrl,
@@ -97,5 +96,3 @@ crawlingRouter.post("/search", async (req, res) => {
     }
   }
 });
-
-// module.exports = router; // error in ES module

@@ -12,11 +12,8 @@ import { queryRouter } from "./routes/dbRouter.js";
 import session from "express-session";
 import { vendorsRouter } from "./routes/vendorsRouter.js";
 
-// import path from "path";
-
 const app = express();
 const PORT = 3000;
-// const __dirname = path.resolve(); // for ES module
 
 moment.tz.setDefault("Asia/Seoul");
 
