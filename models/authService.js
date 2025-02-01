@@ -12,14 +12,15 @@ async function executeQuery(query, params) {
 }
 
 export async function serverLogin(password) {
-  const query = "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
+  const query = "SELECT * FROM l_r WHERE `password` = SHA2(?, 256);";
   const result = await executeQuery(query, [password]);
   return result.length > 0;
 }
 
 export async function changePassword(currentPw, newPw) {
-  const selectQuery = "SELECT * FROM login_renamailer WHERE `password` = SHA2(?, 256);";
-  const updateQuery = "UPDATE login_renamailer SET `password` = SHA2(?, 256) WHERE `password` = SHA2(?, 256);";
+  const selectQuery = "SELECT * FROM l_r WHERE `password` = SHA2(?, 256);";
+  const updateQuery =
+    "UPDATE l_r SET `password` = SHA2(?, 256) WHERE `password` = SHA2(?, 256);";
 
   const result = await executeQuery(selectQuery, [currentPw]);
   if (result.length > 0) {

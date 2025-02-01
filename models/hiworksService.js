@@ -1,11 +1,11 @@
-import {connectedClients, io} from "./socketService.js";
+import { connectedClients, io } from "./socketService.js";
 
 import axios from "axios";
 import logger from "../config/logger.js";
 import puppeteer from "puppeteer";
 
-const inputIDSelector = "input[placeholder=\"로그인 ID\"]";
-const inputPWSelector = "input[placeholder=\"비밀번호\"]";
+const inputIDSelector = 'input[placeholder="로그인 ID"]';
+const inputPWSelector = 'input[placeholder="비밀번호"]';
 const userName = "리뷰나비";
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
@@ -44,15 +44,9 @@ async function goToLoginPage(page, site) {
 }
 
 export async function changeAccountName(oldId, newId, domain) {
-  console.log("🔥 / file: hiworksService.js:110 / oldId:", oldId);
-
   let site = domainCheck(domain);
-
   const result = await isExistId(newId, site);
-  console.log(
-    "🔥 / file: hiworksService.js:116 / changeAccountName / result:",
-    result
-  );
+
   if (result) {
     site = null;
     return { success: false, message: "이미 존재하는 ID 입니다." };
@@ -86,24 +80,14 @@ function domainCheck(domain) {
 
 async function changeIdBrowserControl(oldId, newId, site) {
   const browser = await puppeteer.launch({
-    headless: true, // if you want to see the browser, change it to false
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   try {
-    // const page = await browser.newPage();
     const [page] = await browser.pages();
 
     // page handler
     page.on("dialog", async (dialog) => {
-      console.log(
-        "🔥 / file: hiworksService.js:170 / page.on / dialog.type():",
-        dialog.type()
-      );
-      console.log(
-        "🔥 / file: hiworksService.js:174 / page.on / dialog.message():",
-        dialog.message()
-      );
-
       switch (dialog.type()) {
         case "prompt":
           await dialog.dismiss();
@@ -125,10 +109,6 @@ async function changeIdBrowserControl(oldId, newId, site) {
           await dialog.dismiss();
           break;
       }
-    });
-
-    page.on("error", (err) => {
-      console.error("🔥 / file: hiworksService.js:202 / page.on / err:", err);
     });
 
     await goToLoginPage(page, site);
@@ -155,16 +135,12 @@ async function changeIdBrowserControl(oldId, newId, site) {
 
     await page.$eval(site.userIdChangeButtonSelector, (elem) => elem.click());
 
-    // await page.click(site.userIdChangeButtonSelector);
-
     await page.waitForSelector(site.userIdChangeInput);
     await page.type(site.userIdChangeInput, newId);
     await sleep(1000);
     await page.$eval(site.useridChangeButton, (elem) => elem.click());
-    // await page.click(site.useridChangeButton);
     return true;
   } catch (error) {
-    console.error("🔥 / file: hiworksService.js:238 / error:", error);
     logger.error(error);
     throw error;
   } finally {
@@ -187,23 +163,19 @@ function isExistId(id, site) {
   };
 
   return axios(config)
-  .then((res) => {
-    for (const obj of res.data) {
-      if (obj.user_id === id) {
-        return true;
+    .then((res) => {
+      for (const obj of res.data) {
+        if (obj.user_id === id) {
+          return true;
+        }
       }
-    }
-    return false;
-  })
-  .catch((e) => {
-    console.error(e);
-    return new Error(e);
-  });
+      return false;
+    })
+    .catch((e) => {
+      console.error(e);
+      return new Error(e);
+    });
 }
-
-/*setTimeout(() => {
-  addNewHiworksMail("rkfendro011@reviewnavi.shop", "1234");
-}, 1500);*/
 
 export async function addNewHiworksMail(email, password, mySocketId) {
   const [id, domain] = email.split("@");
@@ -212,15 +184,13 @@ export async function addNewHiworksMail(email, password, mySocketId) {
   console.log(site.loginURL);
 
   const browser = await puppeteer.launch({
-    headless: false, // if you want to see the browser, change it to false
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: false,
   });
   try {
     const [page] = await browser.pages();
     io.sockets.sockets.get(mySocketId).emit("progress", 20);
 
     page.on("error", async (err) => {
-      console.error("🔥 / file: hiworksService.js:377 / page.on / err:", err);
       await browser.close();
       throw err;
     });
@@ -239,7 +209,8 @@ export async function addNewHiworksMail(email, password, mySocketId) {
     await page.type(site.adminPwInput, site.tempPw);
     const isDisabled = await page.$eval(
       ".license-wrap li:nth-child(1) > label > div.hu-checkbox > input",
-      el => el.disabled);
+      (el) => el.disabled
+    );
     if (isDisabled) {
       throw new Error("이미 모든 메일을 사용 중입니다.");
     } else {
@@ -281,13 +252,10 @@ export async function addNewHiworksMail(email, password, mySocketId) {
       await page.click(site.userConfigSaveBtn);
       io.sockets.sockets.get(mySocketId).emit("progress", 100);
       return { isSuccess: true, message: remainMails };
-
     }
   } catch (error) {
-    console.error("🔥 / file: hiworksService.js:322 / error:", error);
     logger.error(error + " / " + email);
     throw error;
-    // throw { isSuccess: false, message: error };
   } finally {
     if (browser) {
       await sleep(500);
@@ -304,15 +272,6 @@ export async function addNewHiworksMail(email, password, mySocketId) {
 async function popUpMessageHandler(page, browser) {
   return new Promise((resolve, reject) => {
     page.on("dialog", async (dialog) => {
-      console.log(
-        "🔥 / file: hiworksService.js:352 / page.on / dialog.type():",
-        dialog.type()
-      );
-      console.log(
-        "🔥 / file: hiworksService.js:356 / page.on / dialog.message():",
-        dialog.message().trim()
-      );
-
       const popUpMessage = dialog.message().trim();
 
       switch (dialog.type()) {
@@ -353,27 +312,14 @@ export async function deleteEmailFromHiworks(willRemoveEmail) {
   let site = hiworksDotCom(domain);
 
   const browser = await puppeteer.launch({
-    headless: false, // if you want to see the browser, change it to false
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
     const [page] = await browser.pages();
 
-    // page handler
-    page.on("dialog", async (dialog) => {
-      console.log(
-        "🔥 / file: hiworksService.js:434 / page.on / dialog.type():",
-        dialog.type()
-      );
-      console.log(
-        "🔥 / file: hiworksService.js:438 / page.on / dialog.message():",
-        dialog.message()
-      );
-    });
-
     page.on("error", async (err) => {
-      console.error("🔥 / file: hiworksService.js:444 / page.on / err:", err);
       await browser.close();
       throw err;
     });
@@ -392,11 +338,14 @@ export async function deleteEmailFromHiworks(willRemoveEmail) {
       if (linkText.trim() === id) {
         console.log("click user id link");
         await page.evaluate(async (id) => {
-          const targetRow = Array.from(document.querySelectorAll('tr'))
-          .find(row => row.querySelector('.user_id .label')?.textContent === id);
+          const targetRow = Array.from(document.querySelectorAll("tr")).find(
+            (row) => row.querySelector(".user_id .label")?.textContent === id
+          );
 
           if (targetRow) {
-            const checkboxInput = targetRow.querySelector('input[type="checkbox"]');
+            const checkboxInput = targetRow.querySelector(
+              'input[type="checkbox"]'
+            );
             if (checkboxInput) {
               checkboxInput.click();
             }
@@ -411,8 +360,8 @@ export async function deleteEmailFromHiworks(willRemoveEmail) {
     await sleep(500);
 
     await page.evaluate(() => {
-      const labels = document.querySelectorAll('.modal-content__body label');
-      labels.forEach(label => {
+      const labels = document.querySelectorAll(".modal-content__body label");
+      labels.forEach((label) => {
         const checkbox = label.querySelector('input[type="checkbox"]');
         if (checkbox) {
           checkbox.click();
@@ -433,7 +382,6 @@ export async function deleteEmailFromHiworks(willRemoveEmail) {
 
     return true;
   } catch (error) {
-    console.error("🔥 / file: hiworksService.js:438 / error:", error);
     logger.error(error);
     throw error;
   } finally {

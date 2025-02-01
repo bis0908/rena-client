@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "renamailer",
+      name: "rena-client",
       script: "./app.js",
       instances: 1,
       exec_mode: "fork",

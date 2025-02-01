@@ -35,22 +35,24 @@ function regexHtml(dom) {
   }
 }
 
+const HTML_ENTITIES = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#039;": "'",
+  "&#39;": "'",
+};
+
 function unEscapeHtml(str) {
-  return new Promise((resolve, reject) => {
-    str = str.toString();
-    if (str == null) {
-      logger.error("str is null");
-    }
-    resolve(
-      str
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#039;/g, "'")
-        .replace(/&#39;/g, "'")
-    );
-  });
+  if (!str) {
+    logger.error("str is null or undefined");
+    return "";
+  }
+
+  return str
+    .toString()
+    .replace(/&(?:amp|lt|gt|quot|#0?39);/g, (match) => HTML_ENTITIES[match]);
 }
 
 async function getHTML(url) {
@@ -68,7 +70,6 @@ async function getHTML(url) {
         logger.error("Error message: " + error.message);
       }
     });
-    // logger.info("axios get data: " + data);
     return load(data);
   } catch (error) {
     logger.error(error.stack);
@@ -168,7 +169,6 @@ export async function updateMailAgent(senderName, senderNo) {
 }
 
 export async function getSenderEmail(senderNo) {
-  // const query = `select distinct id from mail_google_sender where agent_no=? order by no desc;`;
   const query = `SELECT DISTINCT mgs.id
     FROM mail_google_sender mgs
     JOIN mail_allocation_registry mar ON mgs.no = mar.mail_no
@@ -280,11 +280,6 @@ export async function setHtmlTemplate(
 ) {
   const query = `INSERT INTO template_html (template_name, template,  agent_no, template_subject, regdate) VALUES (?,?,?,?,?);`;
   try {
-    // const purify = createPurifyInstance();
-    // const encodedContents = regexHtml(await unEscapeHtml(contents));
-    // const cleanContents = purify.sanitize(encoded);
-    // console.log("cleanContents: ", cleanContents);
-
     const result = await pool.query(query, [
       templateName,
       // encodedContents,
@@ -315,7 +310,6 @@ export async function checkHtmlTemplate(templateName, senderId) {
 export async function deleteHtmlTemplate(templateName, senderId) {
   const query =
     "delete from template_html where template_name=? and agent_no=?";
-  // const query = "delete from mail_google_sender where id= ? and agent_no= ?";
   try {
     const result = await pool.query(query, [templateName, senderId]);
     return result[0].affectedRows > 0;
@@ -336,12 +330,7 @@ export async function updateHtmlTemplate(
   const query = `UPDATE template_html SET template = ?, template_subject = ?, update_date = ?
   WHERE template_name=? AND agent_no=?`;
   try {
-    // const purify = createPurifyInstance();
-    // const encodedContents = regexHtml(await unEscapeHtml(contents));
-    // const cleanContents = purify.sanitize(encoded);
-
     const result = await pool.query(query, [
-      // encodedContents,
       contents,
       subject,
       getDate(),
@@ -411,7 +400,6 @@ export async function dbMailingRegistration(transInfos) {
     VALUES ?;`;
 
   try {
-    // const [transInfo, diffId] = await idMisMatchCheck(transInfos);
     const {
       senderId,
       idList,
@@ -463,10 +451,8 @@ export async function dbMailingRegistration(transInfos) {
       ];
     });
 
-    // Execute the bulk insert query
     await pool.query(insertScheduleQuery, [bulkInsertData]);
 
-    // Return true if all inserts succeeded
     return true;
   } catch (error) {
     logger.error("dbMailingRegistration(): Error querying database:" + error);
@@ -675,19 +661,10 @@ export async function updateSender(oldId, newId, domain) {
     await connection.beginTransaction();
     await connection.query(lockQuery, oldId);
 
-    // mail_google_sender 테이블 업데이트
-    console.log("queryService.js:684 / fullNewId: ", fullNewId);
-    console.log("queryService.js:685 / oldId: ", oldId);
-
     const resultGoogleSender = await connection.query(queryGoogleSender, [
       fullNewId,
       fullOldId,
     ]);
-
-    console.log(
-      "queryService.js:683 / resultGoogleSender: ",
-      resultGoogleSender
-    );
 
     if (resultGoogleSender[0].affectedRows > 0) {
       // mail_delivery_schedule 테이블 업데이트
@@ -796,7 +773,6 @@ export async function getSenderTemplateAll() {
   `;
 
   try {
-    // const [rows, fields] = await pool.query(query);
     const rows = await executeQuery(query);
     return rows;
   } catch (error) {
@@ -926,12 +902,6 @@ export async function isEmailUsing(email) {
   }
 }
 
-/* 
-  query for Current mail allocation status()
-  SELECT mar.mail_no, mar.agent_no, ma.name
-FROM mail_allocation_registry mar
-JOIN mail_agent ma ON mar.agent_no = ma.no
-*/
 export async function getCurrentMailAllocationStatus() {
   const query = `
     SELECT mar.mail_no, mar.agent_no, ma.name
@@ -970,7 +940,7 @@ export async function getErrorMessageSummary(groupNo) {
 
 export async function getTodaySendedGroup() {
   const query = `
- SELECT
+  SELECT
     msg.no,
     msg.name,
     mds.sender_group,
@@ -982,13 +952,13 @@ export async function getTodaySendedGroup() {
     SUM(CASE WHEN mds.send_status = 'failed' THEN 1 ELSE 0 END) AS delivery_failed,
     SUM(CASE WHEN mds.mail_read_status = 'y' THEN 1 ELSE 0 END) AS read_mail,
     SUM(CASE WHEN mds.send_status NOT IN ('finished', 'failed') THEN 1 ELSE 0 END) AS remains
-FROM
+  FROM
     mail_sender_group AS msg
     INNER JOIN mail_delivery_schedule AS mds ON msg.no = mds.sender_group
     AND dispatch_registration_time >= NOW() - INTERVAL 24 HOUR
-GROUP BY
+  GROUP BY
     mds.sender_group
-ORDER BY
+  ORDER BY
     msg.no DESC;
   `;
 
@@ -1002,7 +972,7 @@ ORDER BY
 
 export async function getWeekSendedGroup() {
   const query = `
- SELECT
+  SELECT
     msg.no,
     msg.name,
     mds.sender_group,
@@ -1014,13 +984,13 @@ export async function getWeekSendedGroup() {
     SUM(CASE WHEN mds.send_status = 'failed' THEN 1 ELSE 0 END) AS delivery_failed,
     SUM(CASE WHEN mds.mail_read_status = 'y' THEN 1 ELSE 0 END) AS read_mail,
     SUM(CASE WHEN mds.send_status NOT IN ('finished', 'failed') THEN 1 ELSE 0 END) AS remains
-FROM
+  FROM
     mail_sender_group AS msg
     INNER JOIN mail_delivery_schedule AS mds ON msg.no = mds.sender_group
     AND dispatch_registration_time >= NOW() - INTERVAL 7 DAY
-GROUP BY
+  GROUP BY
     mds.sender_group
-ORDER BY
+  ORDER BY
     msg.no DESC;
   `;
 
@@ -1131,7 +1101,6 @@ export async function updateMailContents(no, mailTitle, mailContent) {
   }
 }
 
-// query for getFilterTemplateAll table: template_filter
 export async function getFilterTemplateAll() {
   const query = `
   SELECT
@@ -1335,7 +1304,6 @@ export async function updateJisuLog(postingInfoArrObj, keyword) {
     await connection.commit();
   } catch (error) {
     await connection.rollback();
-    console.log("queryService.js:1338 / params: ", params);
     throw error;
   } finally {
     connection.release();

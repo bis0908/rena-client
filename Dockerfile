@@ -1,5 +1,4 @@
 # Dockerfile
-# renamailer
 
 FROM node:18
 
