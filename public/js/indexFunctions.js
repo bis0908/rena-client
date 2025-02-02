@@ -466,7 +466,6 @@ function changedLiTag(senderName, agent_no) {
   return baseLiTag;
 }
 
-// Create a function to generate list items for each sender
 function generateSenderListItems(senderNameNums) {
   let listItems = "";
   senderNameNums.forEach((senderNameNum) => {
@@ -476,7 +475,6 @@ function generateSenderListItems(senderNameNums) {
 }
 
 function generateKeyWordListItems(keywords) {
-  // console.log("keywords: ", keywords);
   let listItems = "";
   keywords.forEach((keyword) => {
     listItems += keywordLiTag(JSON.parse(keyword.keyword), keyword.no);
@@ -581,7 +579,6 @@ function chooseSender() {
       senderId = $(this).children().data("senderid");
       $("#selectedSender").val(selectedSenderName);
       toggleSenderSwitch();
-      console.log("발송기: ", selectedSenderName);
 
       $("#selectedSender").attr("data-senderid", senderId);
       let currentDate = new Date();
@@ -628,7 +625,7 @@ function chooseKeyWord() {
 function getSenderList() {
   let senderList;
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getSender",
     dataType: "json",
     async: false,
@@ -671,11 +668,10 @@ async function getIdFromDB(arrOfId, senderId) {
 function getSenderEmail(senderNo) {
   let sensitiveInfo;
   $.ajax({
-    type: "post",
-    url: "/db/getSenderEmail",
+    type: "get",
+    url: `/db/getSenderEmail/${senderNo}`,
     dataType: "json",
     async: false,
-    data: { no: senderNo },
     success: (response) => {
       sensitiveInfo = response;
     },
@@ -688,9 +684,9 @@ function getSenderEmail(senderNo) {
 
 function updateSenderName(senderName, newSenderName, senderNo) {
   $.ajax({
-    type: "post",
-    url: "/db/changeSenderName",
-    data: { name: newSenderName, no: senderNo },
+    type: "patch",
+    url: `/db/changeSenderName/${senderNo}`,
+    data: { name: newSenderName },
     dataType: "json",
     async: false,
     success: (response) => {
@@ -778,12 +774,6 @@ function addBlackListFromDB(id, date) {
 
 function isExistId(targetArray, compareArray) {
   const result = targetArray.filter((obj) => {
-    // let blog_id = "";
-    // if (idList.includes("/")) {
-    //   blog_id = idList.replace(" ", "").split("/")[0];
-    // } else {
-    //   blog_id = idList;
-    // }
     for (const key in compareArray) {
       if (compareArray[key].id) {
         if (obj.id == compareArray[key].id) {
@@ -903,7 +893,6 @@ async function addManually() {
 
         loadManager.setItem(strSearchResults, session);
         InsertSearchList([iao.id], "수동추가", "", "");
-        // return $("#manualAdd").val("");
       } else {
         // 이미 보냄 O, 수신거부 O 라면
         for (const key in checkedIdArr) {
@@ -996,7 +985,7 @@ function InsertSearchList(manualId, keyword, link, title) {
 
 function sendListClear() {
   $.ajax({
-    type: "post",
+    type: "delete",
     url: "/db/sendListClear",
     data: { senderId },
     dataType: "json",
@@ -1011,7 +1000,6 @@ function sendListClear() {
 }
 
 function isValidEmail(email) {
-  // const emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z0-9._]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const idRegex = /^[a-z0-9._-]+$/;
   const [id, domain] = email.split("@");
@@ -1110,74 +1098,10 @@ function setHtmlTemplate(templateName, contents, subject) {
   });
 }
 
-// function getHtmlTemplate() {
-//   $.ajax({
-//     type: "post",
-//     url: "/db/getHtmlTemplate",
-//     async: false,
-//     data: { senderId },
-//     dataType: "json",
-//     success: function (response) {
-//       if (response.length === 0) {
-//         showToast("저장된 템플릿이 없습니다.", "warning");
-//         return;
-//       } else {
-//         templateList = response;
-//         // Clear the modal body before appending new content
-//         $("#htmlTemplateModalBody").empty();
-//         // Create a row for the Bootstrap card layout
-//         let row = $('<div class="row row-cols-1 row-cols-md-2 g-4"></div>');
-//         $("#htmlTemplateModalBody").append(row);
-//         templateList.forEach((template, index) => {
-//           let preview = `
-//           <div class="col">
-//             <div class="card h-200">
-//               <div class="card-body">
-//                 <h5 class="card-title">${template.template_name}</h5>
-//                 <p class="card-detail">수정일: ${
-//                   template.update_date !== null
-//                     ? formatDate(template.update_date)
-//                     : "없음"
-//                 }</p>
-//                 <p class="card-detail">등록일: ${
-//                   template.regdate !== null
-//                     ? formatDate(template.regdate)
-//                     : "없음"
-//                 }</p>
-//                 <p class="card-text">${template.template}</p>
-//                 <div class="d-flex justify-content-center text-center">
-//                   <div class="btn-group btn-group-sm mt-2">
-//                     <button type="button" class="btn btn-primary select-template" data-template-id="${
-//                       template.no
-//                     }">Select</button>
-//                     <button type="button" class="btn btn-danger delete-template" data-template-id="${
-//                       template.no
-//                     }">Delete</button>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>`;
-//           row.append(preview);
-//         });
-
-//         let htmlModal = new bootstrap.Modal($("#htmlTemplateModal"));
-//         $("#htmlTemplateModalLabel").text("HTML Template List");
-//         htmlModal.show();
-//       }
-//     },
-//     error: (xhr, status, error) => {
-//       console.error(xhr);
-//       console.error(status);
-//       console.error(error.message);
-//     },
-//   });
-// }
-
 // ajax function getSenderTemplateAll()
 function getSenderTemplateAll() {
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getSenderTemplateAll",
     dataType: "json",
     success: function (response) {
@@ -1256,9 +1180,8 @@ function createFilterList(filterList) {
 function checkHtmlTemplate(templateName) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      type: "post",
-      url: "/db/checkHtmlTemplate",
-      data: { templateName, senderId },
+      type: "get",
+      url: `/db/checkHtmlTemplate/${senderId}/${templateName}`,
       dataType: "json",
       success: async (response) => {
         if (Object.keys(response).length === 0) {
@@ -1279,9 +1202,8 @@ function checkHtmlTemplate(templateName) {
 
 function deleteHtmlTemplate(templateName) {
   $.ajax({
-    type: "post",
-    url: "/db/deleteHtmlTemplate",
-    data: { templateName, senderId },
+    type: "delete",
+    url: `/db/deleteHtmlTemplate/${senderId}/${templateName}`,
     dataType: "json",
     success: function (response) {
       if (response) {
@@ -1292,10 +1214,9 @@ function deleteHtmlTemplate(templateName) {
   });
 }
 
-// function updateHtmlTemplate(templateName, contents, senderId, subject) {
 function updateHtmlTemplate(templateName, contents, senderId, subject) {
   $.ajax({
-    type: "post",
+    type: "patch",
     url: "/db/updateHtmlTemplate",
     data: { templateName, contents, senderId, subject },
     dataType: "json",
@@ -1317,12 +1238,11 @@ function updateHtmlTemplate(templateName, contents, senderId, subject) {
   });
 }
 
-// ajax call to updateHtmlTemplateContents(no, innerHTML)
 function updateHtmlTemplateContents(no, templateName, mailTitle, innerHTML) {
   $.ajax({
-    type: "post",
-    url: "/db/updateHtmlTemplateContents",
-    data: { no, templateName, mailTitle, innerHTML },
+    type: "patch",
+    url: `/db/updateHtmlTemplateContents/${no}`,
+    data: { templateName, mailTitle, innerHTML },
     dataType: "json",
     success: function (response) {
       if (response.isSuccess) {
@@ -1471,7 +1391,6 @@ function preparingSendMail(yesOrNo) {
   const senderName = $("#senderName").val();
   const innerHTML = quill.root.innerHTML;
   const senderGroup = $("#senderGroup").val();
-  // const theme = $("#theme").val();
 
   isReadyToSendMail.isReady = true;
 
@@ -1556,7 +1475,6 @@ function preparingSendMail(yesOrNo) {
     senderEmailInfo,
     reservation_sent,
     send_status,
-    // theme,
   };
 
   return transInfo;
@@ -1587,9 +1505,8 @@ function insertKeyWord(keyword, senderId) {
 
 function deleteKeyWord(no) {
   $.ajax({
-    type: "post",
-    url: "/db/deleteKeyWord",
-    data: { no },
+    type: "delete",
+    url: `/db/deleteKeyWord/${no}`,
     dataType: "json",
     success: function (response) {
       if (response) {
@@ -1604,10 +1521,9 @@ function deleteKeyWord(no) {
 function getKeyWordList(senderId) {
   let keywordList;
   $.ajax({
-    type: "post",
-    url: "/db/getKeyWord",
+    type: "get",
+    url: `/db/getKeyWord/${senderId}`,
     dataType: "json",
-    data: { senderId },
     async: false,
     success: (response) => {
       keywordList = response;
@@ -1622,13 +1538,11 @@ function getKeyWordList(senderId) {
 function getAllowedTimeZone() {
   let timeZone;
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getAllowedTimeZone",
-    // data: "data",
     async: false,
     dataType: "json",
     success: function (response) {
-      // console.log("response: ", response);
       timeZone = response;
     },
     error: (xhr, status, error) => {
@@ -1639,9 +1553,6 @@ function getAllowedTimeZone() {
 }
 
 function isTimeWithinAllowedRange(time, allowedTimeRange) {
-  // console.log("time: ", time);
-  // console.log("allowedTimeRange: ", allowedTimeRange);
-
   const timeObj = new Date(time);
   const timeHours = timeObj.getHours();
   const timeMinutes = timeObj.getMinutes();
@@ -1677,9 +1588,8 @@ function isTimeWithinAllowedRange(time, allowedTimeRange) {
 
 function deleteKeyWordList(noList) {
   $.ajax({
-    type: "post",
-    url: "/db/deleteKeyWordList",
-    data: { noList },
+    type: "delete",
+    url: `/db/deleteKeyWordList/${noList}`,
     dataType: "json",
     success: function (response) {
       updateKeywordList(senderId);
@@ -1690,7 +1600,7 @@ function deleteKeyWordList(noList) {
 async function getSuperIds() {
   let res = [];
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getSuperIds",
     dataType: "json",
     async: false,
@@ -1708,12 +1618,10 @@ function isValidID(id) {
   return regex.test(id);
 }
 
-// get specific template subject and contents from ajax call
 function getSpecificTemplate(no) {
   $.ajax({
-    type: "post",
-    url: "/db/getSpecificTemplate",
-    data: { no },
+    type: "get",
+    url: `/db/getSpecificTemplate/${no}`,
     dataType: "json",
     async: false,
     success: function (response) {
@@ -1735,9 +1643,8 @@ function getSpecificTemplate(no) {
 
 function deleteHtmlTemplateList(noList) {
   $.ajax({
-    type: "post",
-    url: "/db/deleteHtmlTemplateList",
-    data: { noList },
+    type: "delete",
+    url: `/db/deleteHtmlTemplateList/${noList}`,
     dataType: "json",
     success: function (response) {
       if (response.isSuccess) {
@@ -1761,9 +1668,8 @@ function deleteHtmlTemplateList(noList) {
 
 function deleteSpecificFilterList(noList) {
   $.ajax({
-    type: "post",
-    url: "/db/deleteSpecificFilterList",
-    data: { noList },
+    type: "delete",
+    url: `/db/deleteSpecificFilterList/${noList}`,
     dataType: "json",
     success: function (response) {
       if (response.isSuccess) {
@@ -1785,10 +1691,9 @@ function deleteSpecificFilterList(noList) {
   });
 }
 
-// ajax call All of mail_google_sender
 function getSenderEmails() {
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getSenderEmails",
     dataType: "json",
     success: function (response) {
@@ -1827,8 +1732,6 @@ function createSenderEmailList(senderEmails, insertId) {
         return userA.localeCompare(userB);
       })
     : [];
-
-  console.log("Sorted Emails:", sortedEmails);
 
   sortedEmails.forEach((senderEmail) => {
     const [, domain] = senderEmail.id.split("@");
@@ -1909,15 +1812,10 @@ function markCheckedSenderEmails(arrOfEmail) {
   });
   checkedItems.forEach(function (item) {
     $("#senderTotalList").prepend(item);
-    // $(".mail-test").after(item);
   });
 }
 
 function insertSenderEmailAgent(senderEmail, mail_no, agent_no) {
-  // if (agent_no === undefined || agent_no === null) {
-  //   agent_no = senderId;
-  // }
-
   $.ajax({
     type: "post",
     url: "/db/insertSenderEmailAgent",
@@ -1964,9 +1862,8 @@ function disableSenderEmailAgent(senderEmail, mail_no, agent_no) {
   }
 
   $.ajax({
-    type: "post",
-    url: "/db/disableSenderEmailAgent",
-    data: { mail_no, agent_no },
+    type: "delete",
+    url: `/db/disableSenderEmailAgent/${agent_no}/${mail_no}`,
     dataType: "json",
     success: function (response) {
       if (response.isSuccess) {
@@ -2041,7 +1938,7 @@ function removeSenderEmail(senderEmail) {
 
 function unassignAllEmails() {
   $.ajax({
-    type: "post",
+    type: "delete",
     url: "/db/unassignAllEmails",
     dataType: "json",
     success: function (response) {
@@ -2066,13 +1963,11 @@ function unassignAllEmails() {
   });
 }
 
-// ajax for isEmailUsing(email)
 function isEmailUsing(email) {
   let res;
   $.ajax({
-    type: "post",
-    url: "/db/isEmailUsing",
-    data: { email },
+    type: "get",
+    url: `/db/isEmailUsing/${email}`,
     async: false,
     dataType: "json",
     success: function (response) {
@@ -2087,11 +1982,10 @@ function isEmailUsing(email) {
   return res;
 }
 
-// ajax for getCurrentMailAllocationStatus()
 function getCurrentMailAllocationStatus() {
   return new Promise((resolve, reject) => {
     $.ajax({
-      type: "post",
+      type: "get",
       url: "/db/getCurrentMailAllocationStatus",
       dataType: "json",
       success: function (response) {
@@ -2148,7 +2042,7 @@ function findEmailRemoveBadge(mail_no, agent_no) {
 
 function getAgentList() {
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getAgentList",
     dataType: "json",
     success: function (response) {
@@ -2169,7 +2063,7 @@ function getAgentList() {
 
 function getStoreList() {
   $.ajax({
-    type: "post",
+    type: "get",
     url: "/db/getStoreList",
     dataType: "json",
     success: function (response) {
@@ -2201,11 +2095,10 @@ function createDropdownList(listData) {
   return dropdownList;
 }
 
-function usersWhoHaveAlreadyJoined(date, agentNoArr, storeNoArr) {
+function usersWhoHaveAlreadyJoined(date, agentNo, storeNo) {
   $.ajax({
-    type: "post",
-    url: "/db/usersWhoHaveAlreadyJoined",
-    data: { date, agent_no: agentNoArr, store_no: storeNoArr },
+    type: "get",
+    url: `/db/usersWhoHaveAlreadyJoined/${agentNo}/${storeNo}/${date}`,
     dataType: "json",
     success: function (response) {
       if (response.isSuccess) {
@@ -2281,7 +2174,7 @@ function addNewHiworksMail(email, password) {
 function getFilterTemplateAll() {
   return new Promise((resolve, reject) => {
     $.ajax({
-      type: "post",
+      type: "get",
       url: "/db/getFilterTemplateAll",
       dataType: "json",
       success: function (response) {
@@ -2303,7 +2196,6 @@ function getFilterTemplateAll() {
   });
 }
 
-// ajax for saveFilterTemplate(filterName, array of objects)
 function setFilterTemplate(filterName, filterArray) {
   $.ajax({
     type: "post",
@@ -2412,9 +2304,8 @@ function insertContentAtCursor(content) {
 function deleteEmailFromHiworks(willRemoveEmail) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      type: "post",
-      url: "/mail/deleteEmailFromHiworks",
-      data: { willRemoveEmail },
+      type: "delete",
+      url: `/mail/deleteEmailFromHiworks/${willRemoveEmail}`,
       dataType: "json",
       success: function (response) {
         if (response.isSuccess) {
@@ -2504,7 +2395,7 @@ function toggleEmergency() {
   const isEmergency = $(this).prop("checked");
   $.ajax({
     url: `/db/super-account-toggle/${id}`,
-    type: "PUT",
+    type: "patch",
     data: { isEmergency },
     success: function () {
       // 토글 상태가 성공적으로 변경되었습니다.
@@ -2533,8 +2424,6 @@ function updateSenderList() {
     // 도메인이 같은 경우 사용자명으로 비교
     return userA.localeCompare(userB);
   });
-
-  console.log("Sorted Emails:", sortedEmails);
 
   sortedEmails.forEach((email, index) => {
     const listItem = `

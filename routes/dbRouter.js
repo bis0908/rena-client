@@ -25,9 +25,10 @@ queryRouter.get(
 );
 
 queryRouter.patch(
-  "/changeSenderName",
+  "/changeSenderName/:no",
   asyncHandler(async (req, res) => {
-    const { name, no } = req.body;
+    const { name } = req.body;
+    const no = req.params.no;
     const result = await queryService.updateMailAgent(name, no);
     res.status(200).send({ isSuccess: result });
   })
@@ -139,19 +140,19 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/checkHtmlTemplate",
+queryRouter.get(
+  "/checkHtmlTemplate/:senderId/:templateName",
   asyncHandler(async (req, res) => {
-    const { templateName, senderId } = req.body;
+    const { senderId, templateName } = req.params;
     const result = await queryService.checkHtmlTemplate(templateName, senderId);
     res.status(200).send(result);
   })
 );
 
 queryRouter.delete(
-  "/deleteHtmlTemplate/:templateName/:senderId",
+  "/deleteHtmlTemplate/:senderId/:templateName",
   asyncHandler(async (req, res) => {
-    const { templateName, senderId } = req.params;
+    const { senderId, templateName } = req.params;
     const result = await queryService.deleteHtmlTemplate(
       templateName,
       senderId
@@ -406,10 +407,10 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
-  "/disableSenderEmailAgent",
+queryRouter.delete(
+  "/disableSenderEmailAgent/:agent_no/:mail_no",
   asyncHandler(async (req, res) => {
-    const { mail_no, agent_no } = req.body;
+    const { agent_no, mail_no } = req.params;
     const result = await queryService.disableSenderEmailAgent(
       mail_no,
       agent_no
@@ -418,7 +419,7 @@ queryRouter.post(
   })
 );
 
-queryRouter.post(
+queryRouter.delete(
   "/unassignAllEmails",
   asyncHandler(async (req, res) => {
     const result = await queryService.unassignAllEmails();
