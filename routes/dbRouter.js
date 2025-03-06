@@ -195,7 +195,7 @@ queryRouter.patch(
   })
 );
 
-queryRouter.get(
+queryRouter.post(
   "/dbMailingRegistration",
   asyncHandler(async (req, res) => {
     const { transInfo } = req.body;

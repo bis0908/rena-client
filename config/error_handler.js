@@ -1,4 +1,4 @@
-import logger from "./logger";
+import logger from "./logger.js";
 
 // 공통 에러 처리 미들웨어
 export const errorHandler = (err, req, res, next) => {
