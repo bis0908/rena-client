@@ -26,7 +26,7 @@ export const templateModule = {
    */
   init() {
     this._setupEventListeners();
-    this.getSenderTemplateAll();
+    // this.getSenderTemplateAll();
     this.getFilterTemplateAll();
   },
 

@@ -370,25 +370,21 @@ export const eventsModule = {
     });
 
     // 발송자 추가 버튼 클릭
-    // 주의: 실제 HTML에는 addSenderModal이 없음 - 기능 구현 필요
+    // todo - 미구현 상태
     $(document).on("click", "#addSender", () => {
-      // 추가 기능이 구현되어 있지 않음
       uiModule.showToast(
         "발송기 추가 기능이 구현되어 있지 않습니다.",
         "warning"
       );
-      // $("#addSenderModal").modal("show"); // 해당 모달이 없음
     });
 
     // 슈퍼 계정 모달 이벤트
     $("#superAccountModal").on("show.bs.modal", () => {
       // 슈퍼 계정 목록 로드
-      // target-search.ejs에는 #superAccountList가 있음
       senderModule.loadSuperAccounts();
     });
 
     // 슈퍼 계정 추가 버튼
-    // #addSuperAccount 버튼 존재
     $(document).on("click", "#addSuperAccount", () => {
       const superId = $("#newSuperAccount").val().trim();
       if (superId) {
@@ -397,25 +393,21 @@ export const eventsModule = {
     });
 
     // 슈퍼 계정 삭제 버튼
-    // 주의: .delete-super-account 클래스가 HTML에 없을 수 있음
-    // 실제 구현에 맞게 선택자 수정 필요
+    // todo 선택자 수정 필요
     $(document).on("click", ".delete-super-account", function () {
       const id = $(this).data("id");
       senderModule.deleteSuperAccount(id);
     });
 
     // 필터 템플릿 모달 이벤트
-    // #filterTemplateModal과 #filter-template 버튼이 있음
     $("#filter-template").on("click", () => {
       $("#filterTemplateModalLabel").text("필터 템플릿 관리");
       templateModule.getFilterTemplateAll();
     });
 
     // 필터 템플릿 삭제 버튼
-    // #delete-filter 버튼 있음
     $(document).on("click", "#delete-filter", () => {
-      // 주의: .filter-checkbox 클래스가 HTML에 없을 수 있음
-      // 실제 구현에 맞게 선택자 수정 필요
+      // todo - 선택자 수정 필요
       const checkedFilters = $("#filterTemplateModalBody input:checked");
       if (checkedFilters.length) {
         if (
@@ -438,12 +430,12 @@ export const eventsModule = {
     // 메일 발송 관련 모달 이벤트 (send-email.ejs)
     // =======================================
 
-    // HTML 템플릿 모달 이벤트 - #controlTemplate 버튼 있음
+    // HTML 템플릿 모달 이벤트
     $("#controlTemplate").on("click", () => {
       templateModule.getSenderTemplateAll();
     });
 
-    // HTML 템플릿 검색 - #template-search input 있음
+    // HTML 템플릿 검색
     $(document).on("input", "#template-search", function () {
       const searchTerm = $(this).val().toLowerCase();
       // 주의: #template-list li 선택자가 정확히 일치하는지 확인 필요
@@ -454,7 +446,6 @@ export const eventsModule = {
     });
 
     // 템플릿 선택 이벤트
-    // .select-template 클래스가 있음 (확인 필요)
     $(document).on("click", ".select-template", function (e) {
       e.preventDefault();
       const templateNo = $(this).data("no");
@@ -463,7 +454,7 @@ export const eventsModule = {
       $("#toggleModal").modal("show");
     });
 
-    // 템플릿 삭제 버튼 - #del-checked-template 버튼 있음
+    // 템플릿 삭제 버튼
     $(document).on("click", "#del-checked-template", () => {
       // .form-check-input 선택자가 정확한지 확인 필요
       const checkedTemplates = $(".form-check-input:checked");
@@ -484,12 +475,12 @@ export const eventsModule = {
       }
     });
 
-    // 토글 모달 (템플릿 상세) 이벤트 - #toggleModal 있음
+    // 토글 모달 (템플릿 상세) 이벤트
     $("#toggleModal").on("show.bs.modal", () => {
       $("#toggleModal-title").text("템플릿 상세 정보");
     });
 
-    // 템플릿 수정 버튼 - #edit-template 버튼 있음
+    // 템플릿 수정 버튼
     $(document).on("click", "#edit-template", function () {
       $("#edit-template").addClass("visually-hidden");
       $("#save-template").removeClass("visually-hidden");
@@ -499,10 +490,9 @@ export const eventsModule = {
       $(".template-title").attr("contenteditable", "true");
     });
 
-    // 템플릿 저장 버튼 - #save-template 버튼 있음
+    // 템플릿 저장 버튼
     $(document).on("click", "#save-template", function () {
-      // 주의: #template-id, .template-title, .template-content, .template-subject
-      // 선택자들이 동적으로 생성된 요소에 적용되는지 확인 필요
+      // ? #template-id, .template-title, .template-content, .template-subject
       const templateNo = $("#template-id").val();
       const templateName = $(".template-title").text().trim();
       const contents = $(".template-content").html();
@@ -521,13 +511,13 @@ export const eventsModule = {
       $(".template-title").attr("contenteditable", "false");
     });
 
-    // 템플릿 목록으로 돌아가기 - #back-to-template-list 버튼 있음
+    // 템플릿 목록으로 돌아가기
     $(document).on("click", "#back-to-template-list", function () {
       $("#toggleModal").modal("hide");
       $("#htmlTemplateModal").modal("show");
     });
 
-    // 템플릿 선택 버튼 - .choose-template 클래스 있음
+    // 템플릿 선택 버튼
     $(document).on("click", ".choose-template", function () {
       // 주의: .template-content, .template-subject 선택자 확인 필요
       const contents = $(".template-content").html();
@@ -539,14 +529,14 @@ export const eventsModule = {
       $("#toggleModal").modal("hide");
     });
 
-    // 서버 상태 모달 - #getServerStatus 버튼 있음
+    // 서버 상태 모달
     $("#getServerStatus").on("click", () => {
       // 서버 상태 로드 함수 호출
       // 주의: uiModule.loadServerStatus 함수가 구현되어 있는지 확인 필요
       uiModule.loadServerStatus();
     });
 
-    // 전체 이메일 테스트 - #testAll 버튼 있음
+    // 전체 이메일 테스트
     $("#testAll").on("click", () => {
       const testId = $("#testAllInput").val().trim();
       if (testId) {
@@ -558,7 +548,6 @@ export const eventsModule = {
     });
 
     // 모달 확인 버튼 공통 처리
-    // 주의: .modal-confirm-btn 클래스가 HTML에 없을 수 있음
     $(document).on("click", ".modal-confirm-btn", function () {
       const actionType = $(this).data("action");
       const modalId = $(this).closest(".modal").attr("id");

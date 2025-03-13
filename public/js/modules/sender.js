@@ -78,18 +78,23 @@ export const senderModule = {
       }
 
       const data = await response.json();
-      this.state.senderList = data;
+      this.state.senderList = data.map((json) => ({
+        no: json.no,
+        name: json.name,
+      }));
 
-      const $select = $("#senderSelect");
-      $select.empty();
-      $select.append('<option value="">발송자 선택</option>');
+      $("#senderModalLabel").text("발송기 선택");
 
-      data.forEach((sender) => {
-        $select.append(`<option value="${sender.no}">${sender.name}</option>`);
-      });
+      // const $select = $("#senderSelect");
+      // $select.empty();
+      // $select.append('<option value="">발송자 선택</option>');
+
+      // data.forEach((sender) => {
+      //   $select.append(`<option value="${sender.no}">${sender.name}</option>`);
+      // });
 
       // 발송자 목록을 기반으로 UI 업데이트
-      uiModule.generateSenderListItems(data);
+      uiModule.generateSenderListItems(this.state.senderList);
     } catch (error) {
       console.error("Error fetching sender list:", error);
       showToast("발송자 목록을 가져오는 데 실패했습니다.", "danger");

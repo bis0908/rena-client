@@ -202,14 +202,16 @@ export const uiModule = {
   /**
    * 발송자 목록 항목 생성
    * @param {Array} senderNameNums - 발송자 정보 배열
+   * @returns {string} - HTML 문자열
    */
   generateSenderListItems(senderNameNums) {
-    const $list = $("#senderList");
-    $list.empty();
-
+    let listItems = "";
     senderNameNums.forEach((item) => {
-      $list.append(this.baseLiTag(item.name, item.no));
+      listItems += this.baseLiTag(item.name, item.no);
     });
+
+    // $(".sender-search-area").html(searchBar);
+    $("#senderModal .modal-body ul").html(listItems);
   },
 
   /**
