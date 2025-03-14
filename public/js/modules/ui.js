@@ -146,19 +146,17 @@ export const uiModule = {
    * @returns {string} - HTML 문자열
    */
   baseLiTag(senderName, no) {
-    return `
-      <li class="list-group-item d-flex justify-content-between align-items-center" data-no="${no}">
-        <div>${senderName}</div>
-        <div>
-          <button class="btn btn-sm btn-outline-primary me-1 btn-change" data-no="${no}">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-danger btn-remove" data-no="${no}">
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </div>
+    return `<div class="d-flex justify-content-center sender-row">
+      <li class="list-group-item">
+      <input class="form-check-input me-1" type="radio" name="listGroupRadio" data-senderId="${no}" id="${
+      senderName + no
+    }">
+      <label class="form-check-label" for="${
+        senderName + no
+      }">${no}. ${senderName}</label>
       </li>
-    `;
+      <button type="button" class="btn btn-primary" id="changeSenderName">이름변경</button>
+      </div>`;
   },
 
   /**
